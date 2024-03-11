@@ -1,0 +1,160 @@
+\documentclass[aps,pra,10pt,superscriptaddress,twocolumn,nofootinbib]{revtex4}
+
+%------------------------------------------------------------------------------------------------------------%
+% Packages
+%------------------------------------------------------------------------------------------------------------%
+
+\usepackage{color}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+
+\usepackage{bm}  % Define \bm{} to use bold math fonts
+\usepackage{bbm} % for double-struck identity symbol
+
+\usepackage[pdfpagelabels,pdftex,bookmarks,breaklinks]{hyperref}
+\definecolor{deeppurple}{RGB}{100,0,120} % choose colors
+\definecolor{darkgreen}{RGB}{0,150,0}
+\definecolor{darkblue}{RGB}{0,0,130}
+\hypersetup{colorlinks=true, linkcolor=deeppurple, citecolor=darkgreen, filecolor=red, urlcolor=darkblue}
+\hypersetup{
+	pdftitle={Quantum Tomography via Compressed Sensing: 
+		Error Bounds, Sample Complexity, and Efficient Estimators},
+	pdfauthor={Steven T. Flammia, David Gross, Yi-Kai Liu, Jens Eisert}
+}% add a title and authors to the metadata
+
+
+%------------------------------------------------------------------------------------------------------------%
+% Theorem Environments
+%------------------------------------------------------------------------------------------------------------%
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\renewenvironment{proof}[1][Proof]{\noindent\textbf{#1:} }{\ $\Box$}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%------------------------------------------------------------------------------------------------------------%
+% Macros
+%------------------------------------------------------------------------------------------------------------%
+
+% double-struck math font
+\newcommand*{\N}{\mathbb{N}}
+\newcommand*{\Z}{\mathbb{Z}}
+\newcommand*{\C}{\mathbb{C}}
+\newcommand*{\E}{\mathbb{E}}
+\newcommand*{\one}{\mathbbm{1}} % needs \usepackage{bbm}
+
+\def\EE{\mathbbm{E}}
+
+\newcommand*{\Eref}[1]{Eq.~(\ref{#1})}
+\newcommand*{\Sref}[1]{Sec.~\ref{#1}}
+\newcommand*{\Fref}[1]{Fig.~\ref{#1}}
+
+\newcommand*{\eps}{\epsilon}
+\newcommand*{\veps}{\varepsilon}
+\newcommand*{\Tr}{\mathrm{Tr}}
+\newcommand*{\tr}{\mathrm{tr}}
+\newcommand*{\e}{\mathrm{e}}
+
+\newcommand*{\ket}[1]{|{#1}\rangle}
+\newcommand*{\bra}[1]{\langle{#1}|}
+\newcommand*{\ketbra}[2]{|{#1}\rangle\!\langle{#2}|}
+\newcommand*{\braket}[2]{\langle{#1}|{#2}\rangle}
+\newcommand*{\proj}[1]{\ketbra{#1}{#1}}
+
+\providecommand{\abs}[1]{\lvert#1\rvert} 
+\providecommand{\norm}[1]{\lVert#1\rVert}
+
+\newcommand{\set}[1]{\lbrace #1 \rbrace}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\minarg}{minarg}
+\newcommand*{\Poi}{\mathrm{Poisson}}
+\def\Id{\mathbbm{1}}
+
+\newcommand*{\trnorm}[1]{\norm{#1}_{\tr}}
+
+\newcommand*{\B}{\mathcal{B}}
+
+\def\P{\mathcal{P}}
+\def\R{\mathcal{R}}
+\def\Q{\mathcal{Q}}
+\def\calA{\mathcal{A}} % Renamed to \calA to avoid conflict with \A defined above
+
+\newcommand*{\st}{\ \ \mbox{s.t.} \ }
+
+% Extra definitions added for this document
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calI}{\mathcal{I}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\ox}{\otimes}
+\newcommand{\ds}{\mathrm{DS}}
+\newcommand{\lasso}{\mathrm{Lasso}}
+\newcommand{\WL}{\mathrm{WL}}
+\newcommand{\UL}{\mathrm{UL}}
+
+%------------------------------------------------------------------------------------------------------------%
+% Comment fonts
+%------------------------------------------------------------------------------------------------------------%
+
+\newcommand*{\stf}[1]{\textcolor{red}{#1}}
+\newcommand*{\ykl}[1]{\textcolor{blue}{#1}}
+%\renewcommand*{\stf}[1]{}
+%\renewcommand*{\ykl}[1]{}
+
+%------------------------------------------------------------------------------------------------------------%
+\begin{document}
+
+\title{Quantum Tomography via Compressed Sensing:\\
+Error Bounds, Sample Complexity, and Efficient Estimators}
+
+\author{Steven T.\ Flammia}
+\affiliation{Department of Computer Science and Engineering, University of Washington, Seattle, WA, USA}
+\author{David Gross}
+\affiliation{Institute of Physics, University of Freiburg, 79104 Freiburg, Germany}
+\author{Yi-Kai Liu}
+\affiliation{National Institute of Standards and Technology, Gaithersburg, MD, USA}
+\author{Jens Eisert}
+\affiliation{Dahlem Center for Complex Quantum Systems, Freie Universit\"{a}t Berlin, 14195 Berlin, Germany}
+
+\date{May 18, 2012}
+
+\begin{abstract}
+Intuitively, if a density operator has small rank, then it should be easier to estimate from experimental data, since in this case only a few eigenvectors need to be learned. We prove two complementary results that confirm this intuition. First, we show that a low-rank density matrix can be estimated using fewer copies of the state, i.e., the \textit{sample complexity} of tomography decreases with the rank. Second, we show that unknown low-rank states can be reconstructed from an \textit{incomplete} set of measurements, using techniques from compressed sensing and matrix completion. These techniques use simple Pauli measurements, and their output can be certified without making any assumptions about the unknown state.
+
+We give a new theoretical analysis of compressed tomography, based on the \textit{restricted isometry property} (RIP) for low-rank matrices. Using these tools, we obtain near-optimal error bounds, for the realistic situation where the data contains noise due to finite statistics, and the density matrix is full-rank with decaying eigenvalues. We also obtain upper-bounds on the sample complexity of compressed tomography, and almost-matching lower bounds on the sample complexity of any procedure using adaptive sequences of Pauli measurements.
+
+Using numerical simulations, we compare the performance of two compressed sensing estimators---the matrix Dantzig selector and the matrix Lasso---with standard maximum-likelihood estimation (MLE). We find that, given comparable experimental resources, the compressed sensing estimators consistently produce higher-fidelity state reconstructions than MLE.  In addition, the use of an incomplete set of measurements leads to faster classical processing with no loss of accuracy.
+
+Finally, we show how to certify the accuracy of a low rank estimate using direct fidelity estimation and we describe a method for compressed quantum process tomography that works for processes with small Kraus rank, and requires only Pauli eigenstate preparations and Pauli measurements.  
+\end{abstract}
+
+\maketitle
+%------------------------------------------------------------------------------------------------------------%
+
+\input{sections/intro}
+\input{sections/theory}
+\input{sections/lower}
+\input{sections/certify}
+\input{sections/numerics}
+\input{sections/process}
+\input{sections/conclusion}
+
+%------------------------------------------------------------------------------------------------------------%
+\bibliographystyle{titles}
+\bibliography{tradeoff}
+%------------------------------------------------------------------------------------------------------------%
+
+\end{document}

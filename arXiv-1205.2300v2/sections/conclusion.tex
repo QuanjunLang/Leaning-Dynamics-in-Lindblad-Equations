@@ -1,0 +1,24 @@
+% !TEX root = ../tradeoff.tex
+
+
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Conclusion}\label{S:conclusion}
+%------------------------------------------------------------------------------------------------------------%
+
+
+In this work, we have introduced two new estimators for compressed tomography: the matrix Dantzig selector and the matrix Lasso (Eqs.~(\ref{eqn-ds}) and (\ref{eqn-lasso}).) We have proved that the sample complexity for obtaining an estimate that is accurate to within $\eps$ in the trace distance scales like $O(\tfrac{r^2 d^2}{\eps^2} \log d)$ for rank-$r$ states, and that for higher rank states, the additional error is proportional to the truncation error. This error scaling is optimal up to constant multiplicative factors, and requires measuring only $O(r d \poly\log d)$ Pauli expectation values, a fact we proved using the RIP~\cite{Liu2011}. We also proved that our sample complexity upper bound is within $\poly \log d$ of the sample complexity of the optimal minimax estimator, where the risk function is given by a trace norm confidence interval. We showed how a modification of direct fidelity estimation can be used to unconditionally certify the estimate using a number of measurements which is asymptotically negligible compared to obtaining the original estimate. We numerically simulated our estimators and found that they outperform MLE, giving higher fidelity estimates from the same amount of data. Finally, we generalized our method to quantum process tomography using only Pauli measurements and preparation of product eigenstates of Pauli operators. 
+
+There are many interesting open questions that remain. On the theoretical side, one open problem is of course to tighten the gap that remains between the sample complexity upper and lower bounds. Another open problem is to try to prove optimality with respect to alternative criteria other than minimax risk. For example, it would be interesting to find a useful notion of average case optimality. 
+
+One major open problem is to switch focus from two-outcome Pauli measurements to alternative measurements which are still experimentally feasible. For example, measurements in a local basis have $2^n$ outcomes and are not directly analyzable using our techniques. It would be very interesting to give an analysis of our estimators from the perspective of such local basis measurements. One difficulty, however, is that something like the RIP is not likely to hold in this case, so we will need additional techniques.
+
+On the numerical side, some of the open questions are the following. First, it would be very interesting to do a more detailed numerical study of the performance of our estimators. While they have clearly outperformed MLE in the simulations reported here, there is no question that this is a narrow range of parameters on which we have tested these estimators. It would be interesting to do additional comparative studies between these and other estimators to see how robust these performance enhancements are. It would also be very interesting to study fast first-order solvers such as Refs.~\cite{Cai2010,Becker2010,Ma2011} which could compute estimates on a large number of qubits (10 or more). 
+
+The success of the estimators we studied depends on being able to find good values for the parameters $\lambda$ and $\mu$. While we have used simple heuristics to pick particular values, a detailed study of the optimal values for these parameters could only improve the quality of our estimators. Moreover, MLE seems to enjoy the same ``plateau'' phenomenon, where the quality of the estimate is insensitive to $m$ above a certain cutoff. This leads us to speculate that this is a generic phenomenon among many estimators, and that perhaps there are even better choices for estimators than the ones we benchmark here.
+
+
+\acknowledgements
+
+
+We thank R.~Blume-Kohout, M.~Kleinmann and T.~Monz for discussions and B.~Brown for some preliminary numerical investigations. We additionally thank B.~Englert for hosting the workshop on quantum tomography in Singapore where some of this work was completed. STF was supported by the IARPA MQCO program. DG was supported by the Excellence Initiative of the German Federal and State Governments (grant ZUK~43). Contributions to this work by NIST, an agency of the US government, are not subject to copyright laws. JE was supported by EURYI, the EU (Q-Essence), and BMBF (QuOReP).

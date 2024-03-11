@@ -1,0 +1,364 @@
+\begin{thebibliography}{10}
+
+\bibitem{Nature2008}
+{Nature Insight Supplement}, ``Quantum coherence,'' Nature {\bf 453}, 1003
+  (2008).
+
+\bibitem{Smithey1993}
+D.~T. Smithey, M. Beck, M.~G. Raymer, and A. Faridani, ``Measurement of the
+  Wigner distribution and the density matrix of a light mode using optical
+  homodyne tomography: Application to squeezed states and the vacuum,'' Phys.
+  Rev. Lett. {\bf 70}, 1244 (1993).
+
+\bibitem{Altepeter2003}
+J.~B. Altepeter, D. Branning, E. Jeffrey, T.~C. Wei, P.~G. Kwiat, R.~T. Thew,
+  J.~L. O'Brien, M.~A. Nielsen, and A.~G. White, ``Ancilla-Assisted Quantum
+  Process Tomography,'' Phys. Rev. Lett. {\bf 90}, 193601 (2003).
+
+\bibitem{OBrien2003}
+J.~L. O'Brien, G.~J. Pryde, A.~G. White, T.~C. Ralph, and D. Branning,
+  ``Demonstration of an all-optical quantum controlled-NOT gate,'' Nature {\bf
+  426}, 264 (2003).
+
+\bibitem{OBrien2004}
+J.~L. O'Brien, G.~J. Pryde, A. Gilchrist, D.~F.~V. James, N.~K. Langford, T.~C.
+  Ralph, and A.~G. White, ``Quantum Process Tomography of a Controlled-NOT
+  Gate,'' Phys. Rev. Lett. {\bf 93}, 080502 (2004).
+
+\bibitem{Roos2004}
+C.~F. Roos, G.~P.~T. Lancaster, M. Riebe, H. H\"affner, W. H\"ansel, S. Gulde,
+  C. Becher, J. Eschner, F. Schmidt-Kaler, and R. Blatt, ``Bell States of Atoms
+  with Ultralong Lifetimes and Their Tomographic State Analysis,'' Phys. Rev.
+  Lett. {\bf 92}, 220402 (2004).
+
+\bibitem{Resch2005}
+K.~J. Resch, P. Walther, and A. Zeilinger, ``Full Characterization of a
+  Three-Photon Greenberger-Horne-Zeilinger State Using Quantum State
+  Tomography,'' Phys. Rev. Lett. {\bf 94}, 070402 (2005).
+
+\bibitem{Haffner2005}
+H. H\"{a}ffner {\it et~al.}, ``Scalable multiparticle entanglement of trapped
+  ions,'' Nature {\bf 438}, 643 (2005).
+
+\bibitem{Myrskog2005}
+S.~H. Myrskog, J.~K. Fox, M.~W. Mitchell, and A.~M. Steinberg, ``Quantum
+  process tomography on vibrational states of atoms in an optical lattice,''
+  Phys. Rev. A {\bf 72}, 013615 (2005).
+
+\bibitem{Smith2006}
+G.~A. Smith, A. Silberfarb, I.~H. Deutsch, and P.~S. Jessen, ``Efficient
+  Quantum-State Estimation by Continuous Weak Measurement and Dynamical
+  Control,'' Phys. Rev. Lett. {\bf 97}, 180403 (2006).
+
+\bibitem{Riebe2006}
+M. Riebe, K. Kim, P. Schindler, T. Monz, P.~O. Schmidt, T.~K. K\"orber, W.
+  H\"ansel, H. H\"affner, C.~F. Roos, and R. Blatt, ``Process Tomography of Ion
+  Trap Quantum Gates,'' Phys. Rev. Lett. {\bf 97}, 220407 (2006).
+
+\bibitem{Filipp2009}
+S. Filipp {\it et~al.}, ``Two-Qubit State Tomography Using a Joint Dispersive
+  Readout,'' Phys. Rev. Lett. {\bf 102}, 200402 (2009).
+
+\bibitem{Medendorp2011}
+Z.~E.~D. Medendorp, F.~A. Torres-Ruiz, L.~K. Shalm, G.~N.~M. Tabia, C.~A.
+  Fuchs, and A.~M. Steinberg, ``Experimental characterization of qutrits using
+  symmetric informationally complete positive operator-valued measurements,''
+  Phys. Rev. A {\bf 83}, 051801 (2011).
+
+\bibitem{Barreiro2011}
+J.~T. Barreiro, M. Muller, P. Schindler, D. Nigg, T. Monz, M. Chwalla, M.
+  Hennrich, C.~F. Roos, P. Zoller, and R. Blatt, ``An open-system quantum
+  simulator with trapped ions,'' Nature {\bf 470}, 486 (2011).
+
+\bibitem{Fedorov2012}
+A. Fedorov, L. Steffen, M. Baur, M.~P. da~Silva, and A. Wallraff,
+  ``Implementation of a Toffoli gate with superconducting circuits,'' Nature
+  {\bf 481}, 170 (2012).
+
+\bibitem{Liu2012}
+W.-T. Liu, T. Zhang, J.-Y. Liu, P.-X. Chen, and J.-M. Yuan, ``Experimental
+  Quantum State Tomography via Compressed Sampling,'' Phys. Rev. Lett. {\bf
+  108}, 170403 (2012).
+
+\bibitem{Gross2010}
+D. Gross, Y.-K. Liu, S.~T. Flammia, S. Becker, and J. Eisert, ``Quantum State
+  Tomography via Compressed Sensing,'' Phys. Rev. Lett. {\bf 105}, 150401
+  (2010).
+
+\bibitem{Gross2011}
+D. Gross, ``Recovering low-rank matrices from few coefficients in any basis,''
+  IEEE Trans. Info. Theory {\bf 57}, 1548 (2011).
+
+\bibitem{Shabani2011}
+A. Shabani, R.~L. Kosut, M. Mohseni, H. Rabitz, M.~A. Broome, M.~P. Almeida, A.
+  Fedrizzi, and A.~G. White, ``Efficient Measurement of Quantum Dynamics via
+  Compressive Sensing,'' Phys. Rev. Lett. {\bf 106}, 100401 (2011).
+
+\bibitem{Amiet1999}
+J.~P. Amiet and S. Weigert, ``Reconstructing the density matrix of a spin $s$
+  through three Stern--Gerlach measurements,'' J. Phys. A: Math. Gen. {\bf 32},
+  2777 (1999).
+
+\bibitem{Flammia2005}
+S.~T. Flammia, A. Silberfarb, and C.~M. Caves, ``Minimal Informationally
+  Complete Measurements for Pure States,'' Found. Phys. {\bf 35}, 1985 (2005).
+
+\bibitem{Merkel2010}
+S.~T. Merkel, C.~A. Riofr\'{\i}o, S.~T. Flammia, and I.~H. Deutsch, ``Random
+  unitary maps for quantum state reconstruction,'' Phys. Rev. A {\bf 81},
+  032126 (2010).
+
+\bibitem{Heinosaari2011}
+T. Heinosaari, L. Mazzarella, and M.~M. Wolf, ``Quantum Tomography under Prior
+  Information,'' arXiv:1109.5478 [quant-ph]  (2011).
+
+\bibitem{Kaznady2009}
+M.~S. Kaznady and D.~F.~V. James, ``Numerical strategies for quantum
+  tomography: Alternatives to full optimization,'' Phys. Rev. A {\bf 79},
+  022109 (2009).
+
+\bibitem{Natarajan1995}
+B.~K. Natarajan, ``Sparse approximate solutions to linear systems,'' SIAM J.
+  Comp. {\bf 24}, 227 (1995).
+
+\bibitem{Sturm1999}
+J. Sturm, ``Using {SeDuMi} 1.02, a {MATLAB} toolbox for optimization over
+  symmetric cones,'' Optimization Methods and Software {\bf 11--12}, 625
+  (1999).
+
+\bibitem{Cai2010}
+J.-F. Cai, E.~J. Cand\`{e}s, and Z. Shen, ``A Singular Value Thresholding
+  Algorithm for Matrix Completion,'' SIAM J. Optim. {\bf 20}, 1956 (2010).
+
+\bibitem{Becker2010}
+S. Becker, E.~J. Cand\`{e}s, and M. Grant, ``Templates for convex cone problems
+  with applications to sparse signal recovery,'' Technical report, Department
+  of Statistics, Stanford University (2010. Preprint available at
+  http://tfocs.stanford.edu/tfocs/paper.shtml.) .
+
+\bibitem{Ma2011}
+S. Ma, D. Goldfarb, and L. Chen, ``Fixed point and {Bregman} iterative methods
+  for matrix rank minimization,'' Mathematical Programming {\bf 128}, 321
+  (2011).
+
+\bibitem{Liu2011}
+Y.-K. Liu, ``Universal low-rank matrix recovery from Pauli measurements,''
+  Advances in Neural Information Processing Systems (NIPS) {\bf 24}, 1638
+  (2011).
+
+\bibitem{Candes2011}
+E.~J. Cand\`{e}s and Y. Plan, ``Tight Oracle Inequalities for Low-Rank Matrix
+  Recovery from a Minimal Number of Noisy Random Measurements,'' IEEE Trans.
+  Info. Theory {\bf 57}, 2342 (2011).
+
+\bibitem{Recht2007}
+B. Recht, M. Fazel, and P.~A. Parrilo, ``Guaranteed Minimum-Rank Solutions of
+  Linear Matrix Equations via Nuclear Norm Minimization,'' arXiv:0706.4138
+  (2007).
+
+\bibitem{Flammia2011}
+S.~T. Flammia and Y.-K. Liu, ``Direct Fidelity Estimation from Few Pauli
+  Measurements,'' Phys. Rev. Lett. {\bf 106}, 230501 (2011).
+
+\bibitem{daSilva2011}
+M.~P. {da Silva}, O. {Landon-Cardinal}, and D. Poulin, ``Practical
+  characterization of quantum devices without tomography,'' Phys. Rev. Lett.
+  {\bf 107}, 210404 (2011).
+
+\bibitem{Hradil1997}
+Z. Hradil, ``Quantum-state estimation,'' Phys. Rev. A {\bf 55}, R1561 (1997).
+
+\bibitem{Banaszek1999}
+K. Banaszek, G.~M. D'Ariano, M.~G.~A. Paris, and M.~F. Sacchi,
+  ``Maximum-likelihood estimation of the density matrix,'' Phys. Rev. A {\bf
+  61}, 010304 (1999).
+
+\bibitem{James2001}
+D.~F.~V. James, P.~G. Kwiat, W.~J. Munro, and A.~G. White, ``Measurement of
+  qubits,'' Phys. Rev. A {\bf 64}, 052312 (2001).
+
+\bibitem{Sugiyama2011}
+T. Sugiyama, P.~S. Turner, and M. Murao, ``Error probability analysis in
+  quantum tomography: A tool for evaluating experiments,'' Phys. Rev. A {\bf
+  83}, 012105 (2011).
+
+\bibitem{Shen2001}
+X. Shen, ``On Bahadur efficiency and maximum likelihood estimation in general
+  parameter spaces,'' Statistica Sinica {\bf 11}, 479 (2001).
+
+\bibitem{Chakrabarti2009}
+R. Chakrabarti and A. Ghosh, ``Asymptotic Efficiency and Finite Sample
+  Performance of Frequentist Quantum State Estimation,'' arXiv:0904.1628v1
+  [quant-ph] (2009).  (While the numerical simulations in v1 of this paper are
+  apparently flawed, much of the discussion about MLE retains its value).
+
+\bibitem{Vogel1989}
+K. Vogel and H. Risken, ``Determination of quasiprobability distributions in
+  terms of probability distributions for the rotated quadrature phase,'' Phys.
+  Rev. A {\bf 40}, 2847 (1989).
+
+\bibitem{Jones1991}
+K.~R.~W. Jones, ``Principles of quantum inference,'' Ann. Phys. {\bf 207}, 140
+  (1991).
+
+\bibitem{Buzek1998}
+V. Bu\v{z}ek, R. Derka, G. Adam, and P.~L. Knight, ``Reconstruction of Quantum
+  States of Spin Systems: From Quantum Bayesian Inference to Quantum
+  Tomography,'' Ann. Phys. {\bf 266}, 454 (1998).
+
+\bibitem{Gill2000}
+R.~D. Gill and S. Massar, ``State estimation for large ensembles,'' Phys. Rev.
+  A {\bf 61}, 042312 (2000).
+
+\bibitem{Schack2001}
+R. Schack, T.~A. Brun, and C.~M. Caves, ``Quantum Bayes rule,'' Phys. Rev. A
+  {\bf 64}, 014305 (2001).
+
+\bibitem{Jezek2003}
+M. Je\v{z}ek, J. Fiur\'a\v{s}ek, and Z. Hradil, ``Quantum inference of states
+  and processes,'' Phys. Rev. A {\bf 68}, 012305 (2003).
+
+\bibitem{Neri2005}
+F. Neri, ``Quantum Bayesian methods and subsequent measurements,'' Phys. Rev. A
+  {\bf 72}, 062306 (2005).
+
+\bibitem{Tanaka2005}
+F. Tanaka and F. Komaki, ``Bayesian predictive density operators for
+  exchangeable quantum-statistical models,'' Phys. Rev. A {\bf 71}, 052323
+  (2005).
+
+\bibitem{Bagan2006}
+E. Bagan, M.~A. Ballester, R.~D. Gill, A. Monras, and R. Mu\~noz Tapia,
+  ``Optimal full estimation of qubit mixed states,'' Phys. Rev. A {\bf 73},
+  032301 (2006).
+
+\bibitem{Audenaert2009}
+K.~M.~R. Audenaert and S. Scheel, ``Quantum tomographic reconstruction with
+  error bars: a Kalman filter approach,'' New J. Phys. {\bf 11}, 023028 (2009).
+
+\bibitem{Nunn2010}
+J. Nunn, B.~J. Smith, G. Puentes, I.~A. Walmsley, and J.~S. Lundeen, ``Optimal
+  experiment design for quantum state tomography: Fair, precise, and minimal
+  tomography,'' Phys. Rev. A {\bf 81}, 042109 (2010).
+
+\bibitem{Blume-Kohout2010a}
+R. Blume-Kohout, ``Optimal, reliable estimation of quantum states,'' New J.
+  Phys. {\bf 12}, 043034 (2010).
+
+\bibitem{Blume-Kohout2010}
+R. Blume-Kohout, ``Hedged Maximum Likelihood Quantum State Estimation,'' Phys.
+  Rev. Lett. {\bf 105}, 200504 (2010).
+
+\bibitem{Khoon-Ng2012}
+H. {Khoon Ng} and B.-G. {Englert}, ``A simple minimax estimator for quantum
+  states,'' arXiv:1202.5136  (2012).
+
+\bibitem{Buzek2004}
+V. Bu\v{z}ek, ``Quantum Tomography from Incomplete Data via MaxEnt Principle,''
+  Lect. Notes Phys. {\bf 649}, 189 (2004).
+
+\bibitem{Teo2011}
+Y.~S. Teo, H. Zhu, B.-G. Englert, J. \v{R}eh\'a\v{c}ek, and Z. Hradil,
+  ``Quantum-State Reconstruction by Maximizing Likelihood and Entropy,'' Phys.
+  Rev. Lett. {\bf 107}, 020404 (2011).
+
+\bibitem{Teo2011a}
+Y.~S. Teo, B.-G. Englert, J. \v{R}eh\'a\v{c}ek, and Z. Hradil, ``Adaptive
+  schemes for incomplete quantum process tomography,'' Phys. Rev. A {\bf 84},
+  062125 (2011).
+
+\bibitem{Teo2012}
+Y.~S. Teo, B. Stoklasa, B.-G. Englert, J. \v{R}eh\'a\v{c}ek, and Z. Hradil,
+  ``Incomplete quantum state estimation: a comprehensive study,''
+  arXiv:1202.1713 [quant-ph]  (2012).
+
+\bibitem{Yin2011}
+J.~O.~S. Yin and S.~J. {van Enk}, ``Information criteria for efficient quantum
+  state estimation,'' Phys. Rev. A {\bf 83}, 062110 (2011).
+
+\bibitem{Toth2010}
+G. T\'oth, W. Wieczorek, D. Gross, R. Krischek, C. Schwemmer, and H.
+  Weinfurter, ``Permutationally Invariant Quantum Tomography,'' Phys. Rev.
+  Lett. {\bf 105}, 250403 (2010).
+
+\bibitem{Cramer2010a}
+M. Cramer, M.~B. Plenio, S.~T. Flammia, R. Somma, D. Gross, S.~D. Bartlett, O.
+  Landon-Cardinal, D. Poulin, and Y.-K. Liu, ``Efficient quantum state
+  tomography,'' Nat. Commun. {\bf 1}, 149 (2010).
+
+\bibitem{Landon-Cardinal2012}
+O. Landon-Cardinal and D. Poulin, ``Practical learning method for multi-scale
+  entangled states,'' arXiv:1204.0792 [quant-ph]  (2012).
+
+\bibitem{Christandl2011}
+M. Christandl and R. Renner, ``Reliable Quantum State Tomography,''
+  arXiv:1108.5329 [quant-ph]  (2011).
+
+\bibitem{Blume-Kohout2012}
+R. Blume-Kohout, ``Robust error bars for quantum tomography,'' arXiv:1202.5270
+  [quant-ph]  (2012).
+
+\bibitem{Gross2010a}
+D. Gross and V. Nesme, ``Note on sampling without replacing from a finite
+  collection of matrices,'' arXiv:1001.2738  (2010).
+
+\bibitem{Candes2009}
+E.~J. Cand\`{e}s and B. Recht, ``Exact Matrix Completion via Convex
+  Optimization,'' Found. Comput. Math. {\bf 9}, 717 (2009).
+
+\bibitem{Fazel2008}
+M. Fazel, E. Cand\`{e}s, B. Recht, and P. Parrilo, ``Compressed Sensing and
+  Robust Recovery of Low Rank Matrices,'' in {\em Proc. IEEE 42nd Asilomar
+  Conf. Signals, Systems and Computers}, \ {}\ \ pp.\ 1043--1047  (2008).
+
+\bibitem{Tropp2010}
+J.~A. Tropp, ``User-friendly tail bounds for sums of random matrices,''
+  arXiv:1004.4389  (2010).
+
+\bibitem{Cover1991}
+T.~M. Cover and J.~A. Thomas, {\em Elements of Information Theory} (Wiley,
+  1991).
+
+\bibitem{Milman1986}
+V.~D. Milman and G. Schechtman, {\em Asymptotic Theory of Finite Dimensional
+  Normed Spaces} (Springer-Verlag, 1986).
+
+\bibitem{Bhatia1996}
+R. Bhatia, {\em Matrix Analysis} (Springer, 1996).
+
+\bibitem{Boyd2004}
+S. Boyd and L. Vandenberghe, {\em Convex Optimization} (Cambridge University
+  Press, 2004).
+
+\bibitem{Rehacek2001}
+J. \v{R}eh\'{a}\v{c}ek, Z. Hradil, and M. Je\v{z}ek, ``Iterative algorithm for
+  reconstruction of entangled states,'' Phys. Rev. A {\bf 63}, 040303 (2001).
+
+\bibitem{Molina-Terriza2004}
+G. Molina-Terriza, A. Vaziri, J. \v{R}eh\'a\v{c}ek, Z. Hradil, and A.
+  Zeilinger, ``Triggered Qutrits for Quantum Communication Protocols,'' Phys.
+  Rev. Lett. {\bf 92}, 167903 (2004).
+
+\bibitem{Rehacek2007}
+J. \v{R}eh\'a\v{c}ek, Z. Hradil, E. Knill, and A.~I. Lvovsky, ``Diluted
+  maximum-likelihood algorithm for quantum tomography,'' Phys. Rev. A {\bf 75},
+  042108 (2007).
+
+\bibitem{Jamiolkowski1972}
+A. Jamio\l{}kowski, ``Linear transformations which preserve trace and positive
+  semidefiniteness of operators,'' Rep. Math. Phys. {\bf 3}, 275  (1972).
+
+\bibitem{Mohseni2006}
+M. Mohseni and D.~A. Lidar, ``Direct Characterization of Quantum Dynamics,''
+  Phys. Rev. Lett. {\bf 97}, 170501 (2006).
+
+\bibitem{Mohseni2007}
+M. Mohseni and D.~A. Lidar, ``Direct characterization of quantum dynamics:
+  General theory,'' Phys. Rev. A {\bf 75}, 062331 (2007).
+
+\bibitem{Mohseni2008}
+M. Mohseni, A.~T. Rezakhani, and D.~A. Lidar, ``Quantum-process tomography:
+  Resource analysis of different strategies,'' Phys. Rev. A {\bf 77}, 032322
+  (2008).
+
+\end{thebibliography}

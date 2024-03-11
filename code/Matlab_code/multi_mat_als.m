@@ -4,7 +4,7 @@ function result = multi_mat_als(all_rho, true_para, r)
 T = T_temp - 1;
 
 % r = 5;
-niter = 20;
+niter = 100;
 
 all_A = zeros(n, n, r, niter);      % All steps for A
 all_B = zeros(n, n, r, niter);      % All steps for B
@@ -12,11 +12,14 @@ all_V = zeros(n, n, r, niter);      % All steps for V, V is a formal average of 
 all_K = zeros(n^2, n^2, niter);     % All steps for K
 all_E = zeros(n^2, n^2, niter);
 
+
+
 err_A = zeros(niter, 1);        % store the errors
 err_B = zeros(niter, 1);
 err_V = zeros(niter, 1);
 err_K = zeros(niter, 1);
 err_E = zeros(niter, 1);
+all_rk = zeros(niter, 1);
 loss  = zeros(niter, 1);
 
 A_0 = randn(n, n, r);
@@ -84,10 +87,10 @@ for i = 1:niter
         E_0 = E_0 + vec(B_0(:, :, k))*vec(permute(A_0(:, :, k), [2, 1])).';
     end
     all_E(:, :, i) = E_0;
-    
+    all_rk(i) = rank(E_0);
     % Compute error at each step
-    err_K(i) = norm(K_0 - K_true, 'fro');
-    err_E(i) = norm(E_0 - E_true, 'fro');
+    err_K(i) = norm(K_0 - K_true, 'fro')/n;
+    err_E(i) = norm(E_0 - E_true, 'fro')/n;
     % Note that it is meaningless to compare A_true and A_0 with different r
 
     if r == r_true
@@ -125,7 +128,7 @@ E_est = (E_est + E_est')/2;
 r_est = rank(E_est);
 [U, ~, V] = svd(E_est);
 
-vec_V = (U(:, 1:3) + V(:, 1:3))/2;
+vec_V = (U(:, 1:r_est) + V(:, 1:r_est))/2;
 V_est = zeros(n, n, r_est);
 for k = 1:r_est
     V_est(:, :, k) = reshape(vec_V(:, k), [n, n]);
@@ -136,6 +139,7 @@ result.all_B = all_B;
 result.all_K = all_K;
 result.all_V = all_V;
 result.all_E = all_E;
+result.all_rk = all_rk;
 
 result.err_A = err_A;
 result.err_B = err_B;

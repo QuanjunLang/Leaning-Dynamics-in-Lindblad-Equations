@@ -1,0 +1,189 @@
+% !TEX root = ../tradeoff.tex
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Theory} \label{sec-theory}
+%------------------------------------------------------------------------------------------------------------%
+
+
+We describe our compressed tomography scheme in detail.  First we describe the measurement procedure, and the method for reconstructing the density matrix.  Then we prove error bounds and analyze the sample complexity.
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Random Pauli Measurements}
+%------------------------------------------------------------------------------------------------------------%
+
+
+Consider a system of $n$ qubits, and let $d = 2^n$.  Let $\calP$ be the set of all $d^2$ Pauli operators, i.e., matrices of the form $P = \sigma_1 \ox \cdots \ox \sigma_n$ where $\sigma_i \in \set{I,\sigma^x,\sigma^y,\sigma^z}$.  
+
+Our tomography scheme works as follows.  First, choose $m$ Pauli operators, $P_1,\ldots,P_m$, by sampling independently and uniformly at random from $\calP$.  (Alternatively, one can choose these Pauli operators randomly without replacement~\cite{Gross2010a}, but independent sampling greatly simplifies the analysis.) We will use $t$ copies of the unknown quantum state $\rho$.  For each $i \in [m]$, take $t/m$ copies of the state $\rho$, measure the Pauli observable $P_i$ on each one, and average the measurement outcomes to obtain an estimate of the expectation value $\Tr(P_i\rho)$.  (We will discuss how to set $m$ and $t$ later.  Intuitively, to learn a $d\times d$ density matrix with rank $r$, we will set $m \sim rd\log^6 d$ and $t \sim r^2d^2\log d$.)  
+
+To state this more concisely, we introduce some notation.  Define the \emph{sampling operator} to be a linear map $\calA:\: \HH^d \rightarrow \RR^m$ defined for all $i \in [m]$ by
+\begin{equation}\label{eqn-samp-op}
+	(\calA(\rho))_i = \sqrt{\tfrac{d}{m}} \Tr(P_i\rho) \,.
+\end{equation}
+The normalization is chosen so that $\EE \calA^*\calA = \calI$, where $\calI$ denotes the identity superoperator and $\calA^*$ is the adjoint of $\calA$.  We can then write the output of our measurement procedure as a vector 
+\begin{align}
+	y = \calA(\rho) + z\,,
+\end{align}
+where $z$ represents statistical noise due to the finite number of samples, or even due to an adversary.
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Reconstructing the Density Matrix}
+%------------------------------------------------------------------------------------------------------------%
+
+
+We now show two methods for estimating the density matrix $\rho$.  Both are based on the same intuition:  find a matrix $X \in \HH^d$ that fits the data $y$ while minimizing the trace norm $\norm{X}_\tr$, which serves as a surrogate for minimizing the rank of $X$. In both cases, this amounts to a convex program, which can be solved efficiently.
+
+(We mention that at this point we do not require that our density operators are normalized to have unit trace. We will return to this point later in Section~\ref{S:numerics}.)
+
+The first estimator is obtained by constrained trace-minimization (a.k.a.\ the matrix Dantzig selector):
+\begin{equation}\label{eqn-ds}
+	\hat{\rho}_\ds = \arg\min_X \norm{X}_\tr \st \norm{\calA^*(\calA(X)-y)} \leq \lambda\,.
+\end{equation}
+The parameter $\lambda$ should be set according to the amount of noise in the data $y$; we will discuss this later.
+
+The second estimator is obtained by least-squares linear regression with trace-norm regularization (a.k.a.\ the matrix Lasso):
+\begin{equation}\label{eqn-lasso}
+	\hat{\rho}_\lasso = \arg\min_X \tfrac{1}{2} \norm{\calA(X)-y}_2^2 + \mu \norm{X}_\tr\,.
+\end{equation}
+Again the regularization parameter $\mu$ should be set according to the noise level; we will discuss this later.
+
+One additional point is that we do not require positivity of the output in our definition of the estimators (\ref{eqn-ds}), (\ref{eqn-lasso}). One can add this constraint (since it is convex) and the conclusions below remain unaltered. We will explicitly add positivity later on when we do numerical simulations, and discuss any tradeoffs that result from this.
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Error Bounds}
+%------------------------------------------------------------------------------------------------------------%
+
+
+In previous work on compressed tomography \cite{Gross2010, Gross2011}, error bounds were proved by constructing a ``dual certificate'' \cite{Candes2009} (using convex duality to characterize the solution to the trace-minimization convex program).  Here we derive stronger bounds using a different tool, known as the restricted isometry property (RIP).  The RIP for low-rank matrices was first introduced in Ref.~\cite{Recht2007}, and was recently shown to hold for random Pauli measurements \cite{Liu2011}.  
+
+We say that the sampling operator $\calA$ satisfies the rank-$r$ restricted isometry property if there exists some constant $0 \leq \delta_r < 1$ such that, for all $X \in \CC^{d\times d}$ with rank~$r$, 
+\begin{equation}
+	(1-\delta_r) \norm{X}_F \leq \norm{\calA(X)}_2 \leq (1+\delta_r) \norm{X}_F\,.
+\end{equation}
+For our purposes, we can assume that $X$ is Hermitian.  Note that this notion of RIP is analogous to the one used in Ref.~\cite{Shabani2011}, except that it holds over the set of low-rank matrices, rather than the set of sparse matrices.
+
+The random Pauli sampling operator (\ref{eqn-samp-op}) satisfies RIP with high probability, provided that $m \geq Crd\log^6 d$ (for some absolute constant $C$); this was recently shown in Ref.~\cite[Theorem 2.1]{Liu2011}. We note, however, that this RIP result requires $m$ to be larger by a $\poly\log d$ factor compared to previous results based on dual certificates. Although $m$ is slightly larger, the advantage is that when combined with the results of Ref.~\cite{Candes2011}, this immediately implies strong error bounds for the matrix Dantzig selector and the matrix Lasso. 
+
+To state these improved error bounds precisely, we introduce some definitions. For the rest of Section \ref{sec-theory}, let $C$, $C_0$, $C_1$, $C'_0$ and $C'_1$ be fixed absolute constants. For any quantum state $\rho$, we write $\rho = \rho_r + \rho_c$, where $\rho_r$ is the best rank-$r$ approximation to $\rho$ (consisting of the largest $r$ eigenvalues and eigenvectors), and $\rho_c$ is the residual part. Now we have the following:
+
+\begin{theorem}
+\label{thm-errorbound}
+Let $\calA$ be the random Pauli sampling operator (\ref{eqn-samp-op}) with $m \geq Crd\log^6 d$. Then, with high probability, the following holds:
+
+Let $\hat{\rho}_\ds$ be the matrix Dantzig selector (\ref{eqn-ds}), and choose $\lambda$ so that $\norm{\calA^*(z)} \leq \lambda$.  Then 
+\begin{equation*}
+	\norm{\hat{\rho}_\ds - \rho}_\tr \leq C_0 r\lambda + C_1 \norm{\rho_c}_\tr\,.
+\end{equation*}
+
+Alternatively, let $\hat{\rho}_\lasso$ be the matrix Lasso (\ref{eqn-lasso}), and choose $\mu$ so that $\norm{\calA^*(z)} \leq \mu/2$.  Then 
+\begin{equation*}
+	\norm{\hat{\rho}_{\lasso} - \rho}_\tr \leq C'_0 r\mu + C'_1 \norm{\rho_c}_\tr\,.
+\end{equation*}
+\end{theorem}
+
+In these error bounds, the first term depends on the statistical noise $z$.  This in turn depends on the number of copies of the state that are available in the experiment; we will discuss this in the next section.  The second term is the rank-$r$ approximation error.  It is clearly optimal, up to a constant factor.
+
+\textbf{Proof:} These error bounds follow from the RIP as shown by Theorem 2.1 in Ref.~\cite{Liu2011}, and a straightforward modification of Lemma 3.2 in Ref.~\cite{Candes2011} to bound the error in trace norm rather than Frobenius norm (this is similar to the proof of Theorem 5 in Ref.~\cite{Fazel2008}).  
+
+The modification of Lemma 3.2 in Ref.~\cite{Candes2011} is as follows\footnote{Note that Ref.~\cite{Candes2011} contains a typo in Lemma 3.2:  on the right hand side, in the second term, it should be $\norm{M_c}_*/\sqrt{r}$, not $\norm{M_c}_*/r$.}.  (For the remainder of this section, equation numbers of the form (III.x) refer to Ref.~\cite{Candes2011}.)  In the case of the Dantzig selector, let $H = \hat{\rho}_\ds - \rho$.  Following equation (III.8), we can get the following bound:  
+\begin{equation}\label{eqn-ds-pf-1}
+	\norm{H}_\tr \leq \norm{H_0}_\tr + \norm{H_c}_\tr \leq 2\norm{H_0}_\tr + 2\norm{\rho_c}_\tr, 
+\end{equation}
+where we used the triangle inequality and equation (III.8).  Then, at the end of the proof, we write:
+\begin{equation}\label{eqn-ds-pf-2}
+	\begin{split}
+	\norm{H_0}_\tr &\leq \sqrt{2r} \norm{H_0}_F \leq \sqrt{2r} \norm{H_0+H_1}_F \\
+	&\leq C_1 4\sqrt{2} r \lambda + C_1 2\sqrt{2} \delta_{4r} \norm{\rho_c}_\tr, 
+	\end{split}
+\end{equation}
+where we used Cauchy-Schwarz, the fact that $H_0$ and $H_1$ are orthogonal, the bound on $\norm{H_0+H_1}_F$ following equation (III.13), and equation (III.7).  Combining (\ref{eqn-ds-pf-1}) and (\ref{eqn-ds-pf-2}) gives our desired error bound.  The error bound for the Lasso is obtained in a similar way; see section III.G in Ref.~\cite{Candes2011}.  $\square$
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Sample Complexity}
+%------------------------------------------------------------------------------------------------------------%
+
+
+Here we bound the sample complexity of our tomography scheme, that is, we bound the number of copies of the unknown quantum state $\rho$ that are needed to obtain our estimate up to some accuracy. What we show, roughly speaking, is that $t = O\bigl((\tfrac{rd}{\varepsilon})^2 \log d\bigr)$ copies are sufficient to reconstruct an estimate of an unknown rank $r$ state up to accuracy $\varepsilon$ in the trace distance. For comparison, note that when $r = d$, and one does full tomography, $O(d^4/\varepsilon^2)$ copies are sufficient to estimate a full-rank state with accuracy $\varepsilon$ in trace distance\footnote{To see this, let $P_1,\ldots,P_{d^2}$ denote the Pauli matrices. For each $i \in [d^2]$, measure $P_i$ $O(d^2/\varepsilon^2)$ times, to estimate its expectation value with additive error $\pm O(\varepsilon/d)$. Equivalently, one estimates the expectation value of $P_i/\sqrt{d}$ with additive error $\pm O(\varepsilon/d^{3/2})$. Using linear inversion, one gets an estimated density matrix with additive error $O(\varepsilon/d^{1/2})$ in Frobenius norm, which implies error $O(\varepsilon)$ in trace norm.}.
+
+To make this claim precise, we need to specify how we construct our data vector $y$ from the measurement outcomes on the $t$ copies of the state $\rho$. For the matrix Dantzig selector, suppose that 
+\begin{equation}\label{E:copiest}
+t \geq 2 C_4 (C_0 r/\varepsilon)^2 d(d+1) \log d
+\end{equation}
+for some constants $C_4 > 1$ and $\varepsilon \leq C_0$. (For the matrix Lasso, substitute $C'_0$ for $C_0$ in these equations.)
+We construct an estimate of $\calA(\rho)$ as follows: for each $i \in [m]$, we take $t/m$ copies of $\rho$, measure the random Pauli observable $P_i$ on each of the copies, and use this to estimate $\Tr(P_i\rho)$.  Then let $y$ be the resulting estimate of $\calA(\rho)$, and let $z = y - \calA(\rho)$. Everything else is defined exactly as in Theorem \ref{thm-errorbound}.
+
+\begin{theorem}\label{thm-samplecomplexity}
+Given $t = O\bigl((\tfrac{rd}{\varepsilon})^2 \log d\bigr)$ copies of $\rho$ as in Eq.~(\ref{E:copiest}) and measured as discussed above, then the following holds with high probability over the measurement outcomes:
+
+Let $\hat{\rho}_\ds$ be the matrix Dantzig selector (\ref{eqn-ds}), and set $\lambda = \varepsilon/(C_0 r)$ for some $\varepsilon > 0$.  Then 
+\begin{equation*}
+	\norm{\hat{\rho}_\ds - \rho}_\tr \leq \varepsilon + C_1 \norm{\rho_c}_\tr\,.
+\end{equation*}
+
+Alternatively, let $\hat{\rho}_\lasso$ be the matrix Lasso (\ref{eqn-lasso}), and set $\mu = \varepsilon/(C'_0 r)$.  Then 
+\begin{equation*}
+	\norm{\hat{\rho}_\lasso - \rho}_\tr \leq \varepsilon + C'_1 \norm{\rho_c}_\tr\,.
+\end{equation*}
+\end{theorem}
+
+\textbf{Proof:} Our claim reduces to the following question:  if we fix some value of $\lambda > 0$, how many copies of $\rho$ are needed to ensure that the measurement data $y$ satisfies $\norm{\calA^*(y-\calA(\rho))} \leq \lambda$?  Then one can apply Theorem \ref{thm-errorbound} to get an error bound for our estimate of $\rho$.
+
+Let $t$ be the number of copies of $\rho$.  Say we fix the measurement operator $\calA$, i.e., we fix the choice of the Pauli observables $P_1,\ldots,P_m$.  (The measurement outcomes are still random, however.)  For $i \in [m]$ and $j \in [t/m]$, let $B_{ij} \in \set{1,-1}$ be the outcome of the $j$'th repetition of the experiment that measures the $i$'th Pauli observable $P_i$.  Note that $\EE B_{ij} = \Tr(P_i\rho)$.  Then construct the vector $y \in \RR^m$ containing the estimated expectation values (scaled by $\sqrt{d/m}$):
+\begin{equation}
+	y_i = \sqrt{\tfrac{d}{m}} \cdot \tfrac{m}{t} \sum_{j=1}^{t/m} B_{ij}, \quad i \in [m].
+\end{equation}
+Note that $\EE y = \calA(\rho)$.  
+
+We will bound the deviation $\norm{\calA^*(y-\calA(\rho))}$, using the matrix Bernstein inequality.  First we write 
+\begin{equation}
+	\calA^*(y) = \sqrt{\tfrac{d}{m}} \sum_{i=1}^m P_i y_i
+	 = \tfrac{d}{t} \sum_{i=1}^m \sum_{j=1}^{t/m} P_i B_{ij}, 
+\end{equation}
+and also
+\begin{equation}
+	\calA^*\calA(\rho) = \tfrac{d}{m} \sum_{i=1}^m P_i \Tr(P_i\rho).
+\end{equation}
+We can now write $\calA^*(y-\calA(\rho))$ as a sum of independent (but not identical) matrix-valued random variables:
+\begin{equation}
+	\calA^*(y-\calA(\rho)) = \sum_{i=1}^m \sum_{j=1}^{t/m} X_{ij}, \quad
+	X_{ij} = \tfrac{d}{t} P_i \bigl[B_{ij} - \Tr(P_i\rho)\bigr].
+\end{equation}
+Note that $\EE X_{ij} = 0$ and $\norm{X_{ij}} \leq 2d/t =: R$.  Also, for the second moment we have 
+\begin{equation}
+	\begin{split}
+	\EE\bigl(X_{ij}^2\bigr) &= \EE\Bigl(\tfrac{d^2}{t^2} I \bigl[B_{ij} - \Tr(P_i\rho)\bigr]^2\Bigr) \\
+	 &= \tfrac{d^2}{t^2} I \bigl[1 - \Tr(P_i\rho)^2\bigr].
+	\end{split}
+\end{equation}
+Then we have
+\begin{equation}
+	\begin{split}
+	\sigma^2
+	 &:= \Bigl\lVert \sum_{ij} \EE(X_{ij}^2) \Bigr\rVert = \sum_{ij} \tfrac{d^2}{t^2} \bigl[1 - \Tr(P_i\rho)^2\bigr] \\
+	 &\leq t \cdot \tfrac{d^2}{t^2} = \tfrac{d^2}{t}.
+	\end{split}
+\end{equation}
+Now the matrix Bernstein inequality (Theorem 1.4 in \cite{Tropp2010}) implies that 
+\begin{equation}
+	\begin{split}
+	\Pr\bigl[\norm{\calA^*&(y-\calA(\rho))} \geq \lambda\bigr]
+	 \leq d\cdot \exp\Bigl( -\tfrac{\lambda^2/2}{\sigma^2 + (R\lambda/3)} \Bigr) \\
+	 &\leq d\cdot \exp\Bigl( -\tfrac{t\lambda^2/2}{d(d+1)} \Bigr)
+	\end{split}
+\end{equation}
+(where we assumed $\lambda \leq 1$). 
+
+For the matrix Dantzig selector, we set $\lambda = \varepsilon/(C_0 r)$, and we get that, for any $t \geq 2 C_4 \lambda^{-2} d(d+1) \log d = 2 C_4 (C_0 r/\varepsilon)^2 d(d+1) \log d$, 
+\begin{equation}
+	\begin{split}
+	\Pr\bigl[\norm{\calA^*(y-\calA(\rho))} \geq \tfrac{\varepsilon}{C_0 r}\bigr]
+	 &\leq d\cdot \exp(-C_4 \log d) \\
+	 &= d^{1-C_4},
+	\end{split}
+\end{equation}
+which is exponentially small in $C_4$.  Plugging into Theorem \ref{thm-errorbound} completes the proof of our claim.  A similar argument works for the matrix Lasso.  $\square$
+

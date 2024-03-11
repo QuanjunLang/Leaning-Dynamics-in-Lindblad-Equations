@@ -1,0 +1,124 @@
+% !TEX root = ../tradeoff.tex
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Introduction}
+%------------------------------------------------------------------------------------------------------------%
+
+
+In recent years there has been amazing progress in studying complex quantum mechanical systems under controlled laboratory conditions~\cite{Nature2008}. Quantum tomography of states and processes in an invaluable tool used in many such experiments, because it enables a complete characterization of the state of a quantum system or process (see e.g.~\cite{Smithey1993, Altepeter2003, OBrien2003, OBrien2004, Roos2004, Resch2005, Haffner2005, Myrskog2005, Smith2006, Riebe2006, Filipp2009, Medendorp2011, Barreiro2011, Fedorov2012, Liu2012}). Unfortunately, tomography is very resource intensive, and scales exponentially with the size of the system.  For example, a system of $n$ spin-1/2 particles (qubits) has a Hilbert space with dimension $d = 2^n$, and the state of the system is described by a density matrix with $d^2 = 4^n$ entries.
+
+Recently a new approach to tomography was proposed:
+\textit{compressed} quantum tomography, based on techniques from
+compressed sensing~\cite{Gross2010,Gross2011}. The basic idea is to concentrate
+on states that are well approximated by density matrices of rank $r \ll
+d$.  
+This approach can be applied to many realistic experimental situations, 
+where the ideal state of the system is pure, and physical constraints 
+(e.g., low temperature, or the locality of interactions) ensure that 
+the actual (noisy) state still has low entropy. 
+% (and not a maximally mixed state on the full Hilbert space). 
+
+This approach is convenient because it does not require detailed knowledge 
+about the system. However, note that when such knowledge is available, 
+one can use alternative formulations of compressed tomography,
+with different notions of sparsity, to further reduce the dimensionality of the
+problem~\cite{Shabani2011}. We will compare these methods in
+Section~\ref{S:process-related-work}.  
+% Although the state is mostly supported on a low-dimensional subspace, 
+% one assumes no prior knowledge about the structure of this subspace.
+
+The main challenge in compressed tomography is how to exploit this low-rank structure, 
+when one does not know the subspace on which the state is supported. 
+Consider the example of a pure quantum state. Since pure states are
+specified by only $O(d)$ numbers, it seems plausible that one could be
+reconstructed after measuring only $O(d)$ observables, compared with
+$O(d^2)$ for a general mixed state.  While this intuition is indeed
+correct~\cite{Amiet1999, Flammia2005, Merkel2010, Heinosaari2011}, it is a challenge to devise a
+practical tomography scheme that takes advantage of this. In
+particular, one is restricted to those measurements that can be easily
+performed in the lab; furthermore, one then has to find a pure state
+consistent with measured data~\cite{Kaznady2009}, preferably by some
+procedure that is computationally efficient (note that finding
+minimum-rank solutions is NP-hard in general~\cite{Natarajan1995}).
+
+Compressed tomography provides a solution that meets all of these
+practical requirements~\cite{Gross2010,Gross2011}.  It requires
+measurements of Pauli observables, which are feasible in many
+experimental systems.  In total, it uses a random subset of $m =
+O(rd\log d)$ Pauli observables, which is
+just slightly more than the $O(rd)$ degrees of freedom that specify an
+arbitrary rank $r$ state.  Then the density matrix $\rho$ is
+reconstructed by solving a convex program.
+This can be done efficiently using general-purpose SDP
+solvers~\cite{Sturm1999}, or specialized algorithms for larger
+instances~\cite{Cai2010, Becker2010, Ma2011}. The scheme is robust to noise and continues to perform well when the measurements are imprecise or when the state is only close to a low-rank state.  
+
+Here we follow up on Refs.~\cite{Gross2010,Gross2011} by giving a stronger (and completely different) theoretical analysis, which is based on the \textit{restricted isometry property} (RIP) \cite{Liu2011, Candes2011, Recht2007}.  This answers a number of questions that could not be addressed satisfactorily using the earlier techniques based on dual certificates.  First, how large is the error in our estimated density matrix, when the true state is full-rank with decaying eigenvalues? We show that the error is not much larger than the ``tail'' of the eigenvalue spectrum of the true state. Second, how large is the \textit{sample complexity} of compressed tomography, i.e., how many copies of the unknown state are needed, to estimate its density matrix?  We show that compressed tomography achieves nearly the optimal sample complexity among all procedures using Pauli measurements, and, surprisingly, the sample complexity of compressed tomography is nearly independent of the number of measurement settings $m$, so long as $m \geq \Omega(rd \poly\log d)$.
+
+In addition, we use numerical simulations to investigate the question: given a fixed time $T$ during which an experiment can be run, is it better to do compressed tomography or full tomography, i.e., is it better to use a few measurement settings and repeat them many times, or do all possible measurements with fewer repetitions?  For the situations we simulate, we find that compressed tomography provides better accuracy at a reduced computational cost compared to standard maximum-likelihood estimation.
+
+Finally, we provide two useful tools:  a procedure for certifying the accuracy of low-rank state estimates, and a very simple compressed sensing technique for quantum process tomography.
+
+We now describe these results in more detail.
+
+\textit{Theoretical analysis using RIP.} 
+% First, we prove much stronger error bounds, using a different technique than before, known as the restricted isometry property (RIP) \cite{Liu2011, Candes2011, Recht2007}.  These error bounds are nearly optimal, though they require slightly more measurement settings with $m = O(rd\log^6 d)$, a bound that we believe can be improved.
+% Roughly speaking, previous work used convex duality to characterize the solution to the convex optimization.  
+We use a fundamental geometric fact:  the manifold of rank-$r$ matrices in $\CC^{d\times d}$ can be embedded into $O(rd\poly\log d)$ dimensions, with small distortion in the 2-norm.  An embedding that does this is said to satisfy the \textit{restricted isometry property} (RIP) \cite{Recht2007}.  In \cite{Liu2011} it was shown that such an embedding can be realized using the expectation values of a random subset of $O(rd\poly\log d)$ Pauli matrices.  This implies the existence of so-called ``universal'' methods for low-rank matrix recovery:  there exists a \textit{fixed} set of $O(rd\poly\log d)$ Pauli measurements, that has the ability to reconstruct \textit{every} rank-$r$ $d\times d$ matrix.  Moreover, with high probability, a random choice of Pauli measurements will achieve this.  (The earlier results of \cite{Gross2010} placed the quantifiers in the opposite order:  for every rank-$r$ $d\times d$ matrix $\rho$, most sets of $O(rd\poly\log d)$ Pauli measurements can reconstruct that \textit{particular} matrix $\rho$.)
+
+Intuitively, the RIP says that a set of random Pauli measurements is sensitive to all low-rank errors simultaneously. This is important, because it implies stronger error bounds for low-rank matrix recovery \cite{Candes2011}. These bounds show that, when the unknown matrix $\rho$ is \textit{full-rank}, our method returns a (certifiable) rank-$r$ approximation of $\rho$, that is almost as good as the best such approximation (corresponding to the truncated eigenvalue decomposition of $\rho$). 
+
+In Ref.~\cite{Candes2011}, these error bounds were used to show the accuracy of certain compressed sensing estimators, for measurements with additive Gaussian noise.  Here, we use them to upper-bound the sample complexity of our compressed tomography scheme.  (That is, we bound the errors due to estimating each Pauli expectation value from a finite number of experiments.)  Roughly speaking, we show that our scheme uses $O(r^2d^2\log d)$ copies to characterize a rank-$r$ state (up to constant error in trace norm).  When $r = d$, this agrees with the sample complexity of full tomography. Our proof assumes a binomial noise model, but minor modifications could extend this result to other relevant noise models, such as multinomial, Gaussian, or Poissonian noise. 
+
+Furthermore, we show an information-theoretic lower bound for tomography of rank-$r$ states using adaptive sequences of single-copy Pauli measurements: at least $\Omega(r^2 d^2/\log d)$ copies are needed to obtain an estimate with constant accuracy in the trace distance. This generalizes a result from Ref.~\cite{Flammia2011} for pure states. 
+Therefore, our upper bound on the sample complexity of compressed tomography is nearly tight, and compressed tomography nearly achieves the optimal sample complexity among all possible methods using Pauli measurements.
+
+Our observation that incomplete sets of observables are often sufficient to unambiguously specify a state gives rise to a new degree of freedom when designing experiments: when aiming to reduce statistical noise in the reconstruction, one can either estimate a small set of observables relatively accurately, or else a large (e.g. complete) set of observables relatively coarsely. Our bounds (as well as our numerics) show that, remarkably, over a very large range of $m$ the \emph{only} quantity relevant for the reconstruction error is $t$, the total number of experiments performed. It does not matter over how many observables the repetitions are distributed. Thus, when fixing $t$ and varying $m$, the reduction in the number of observables and the increase in the number of measurements per observable have no net effect with regard to the fidelity of the estimate, so long as $m \ge \Omega(rd \poly\log d)$. 
+
+
+
+\textit{Certification.}  We generalize the technique of direct fidelity estimation (DFE)~\cite{Flammia2011, daSilva2011} to work with low-rank states.
+% One can combine compressed tomography with direct fidelity estimation (DFE)~\cite{Flammia2011, daSilva2011} to certify an estimate of the density matrix, without making any assumptions about the unknown state.  
+Thus, one can use compressed tomography to get an estimated density matrix $\hat{\rho}$, and use DFE to check whether $\hat{\rho}$ agrees with the true state $\rho$. This check is guaranteed to be sound, even if the true state $\rho$ is not approximately low rank. Our extension of DFE may be of more general interest, since it can be used to efficiently certify \textit{any} estimate $\hat\rho$ regardless of whether it was obtained using compressed sensing or not, as long as the rank $r$ of the \textit{estimate} is small (and regardless of the ``true'' rank). 
+
+
+
+\textit{Numerical simulations.} We compare the performance of several different estimators (methods for reconstructing the unknown density matrix). They include: constrained trace-minimization (a.k.a.\ the matrix Dantzig selector), least squares with trace-norm regularization (a.k.a.\ the matrix Lasso), as well as a standard maximum likelihood estimation (MLE)~\cite{Hradil1997, Banaszek1999, James2001} for comparison. 
+
+We observe that our estimators outperform MLE in essentially all aspects, with the matrix Lasso giving the best results. The fidelity of the estimate is consistently higher using the compressed tomography estimators. Also, the accuracy of the compressed sensing estimates are (as mentioned above) fairly insensitive to the number of measurement settings $m$ (assuming the total time available to run the experiment is fixed). So by choosing $m \ll d^2$, one still obtains accurate estimates, but with much faster classical post-processing, since the size of the data set scales like $O(m)$ rather than $O(d^2)$. 
+
+It may be surprising to the reader that we outperform MLE, since it is often remarked (somewhat vaguely) that ``MLE is optimal.'' However, MLE is a general-purpose method that does not specifically exploit the fact that the state is low-rank. Also, the optimality results for MLE only hold asymptotically and for informationally complete measurements~\cite{Sugiyama2011, Shen2001}; for finite data~\cite{Chakrabarti2009} or for incomplete measurements, MLE can be far from optimal.
+
+From these results, one can extract some lessons about how to use compressed tomography.  Compressed tomography involves two separate ideas: (1) measuring an incomplete set of observables (i.e., choosing $m \ll d^2$), and (2) using trace minimization or regularization to reconstruct low-rank solutions. Usually one does both of these things. Now, suppose the goal is to reconstruct a low-rank state using as few samples as possible. Our results show that one can achieve this goal by doing (2) \textit{without} (1). At the same time, there is no penalty in the quality of the estimate when doing (1), and there are practical reasons for doing it, such as reducing the size of the data set to speed up the classical post-processing.
+
+\textit{Quantum process tomography.} Finally, we adapt our method to perform tomography of processes with small Kraus rank.  Our method is easy to implement, since it requires only the ability to prepare eigenstates of Pauli operators and measure Pauli observables. In particular, we require \emph{no} entangling gates or ancillary systems for the procedure. In contrast to Ref.~\cite{Shabani2011}, our method is not restricted to processes that are element-wise sparse in some known basis, as discussed in Section~\ref{S:process-related-work}. This is an important advantage in practice, because while the ideal (or intended) evolution of a system may be sparse in a known basis, it is often the case that the noise processes perturbing the ideal component are not sparse, and knowledge of these noise processes is key to improving the fidelity of a quantum device with some theoretical ideal.
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Related Work}
+%------------------------------------------------------------------------------------------------------------%
+
+
+While initial work on tomography considered only linear inversion methods~\cite{Vogel1989}, most subsequent work has largely focused on maximum likelihood methods and to a lesser extent Bayesian methods for state reconstruction~\cite{Jones1991, Hradil1997, Buzek1998, Banaszek1999, Gill2000, Schack2001, James2001, Jezek2003, Neri2005, Tanaka2005, Bagan2006, Audenaert2009, Nunn2010, Blume-Kohout2010a, Vogel1989}.
+
+However, recently there has been a flurry of work which seeks to transcend the standard MLE methods and improve on them in various ways. Our contributions can also be seen in this context. 
+
+One way in which alternatives to MLE are being pursued is through what we call \emph{full rank methods}. Here the idea is somewhat antithetical to ours: the goal is to output a full rank density operator, rather than a rank deficient one. This is desirable in a context where one cannot make the approximation that rare events will never happen. Blume-Kohout's hedged MLE~\cite{Blume-Kohout2010} and Bayesian mean estimation~\cite{Blume-Kohout2010a} are good examples of this type of estimator, as are the minimax estimator of Ref.~\cite{Khoon-Ng2012} and the so-called Max-Ent estimators~\cite{Buzek2004, Teo2011, Teo2011a, Teo2012}. The latter are specifically for the setting where the measurement data are \emph{not} informationally complete, and one tries to minimize the bias of the estimate by maximizing the entropy along the directions where one has no knowledge. 
+
+By contrast, our \emph{low rank} methods do not attempt to reconstruct the complete density matrix, but only a rank-$r$ approximation, which is accurate when the true state is close to low-rank. From this perspective, our methods can be seen as a sort of Occam's Razor, using as few fit parameters as possible while still agreeing with the data~\cite{Yin2011}. Furthermore, as we show here and elsewhere~\cite{Gross2010}, informationally incomplete measurements can still provide faithful state reconstructions up to a small truncation error.
+
+One additional feature of our methods is that we are deeply concerned with the \emph{feasibility} of our estimators for a moderately large number of qubits (say, 10-15). In contrast to most of the existing literature, we adopt the perspective that it is not enough for an estimator to be asymptotically efficient in the number of copies for fixed $d$. We also want the scaling with respect to $d$ to be optimal. We specifically take advantage of the fact that many states and processes are described by low rank objects to reduce this complexity. In this respect, our methods are similar to tomographic protocols that are tailored to special ansatz classes of states, such as those recently developed for use with permutation-invariant states~\cite{Toth2010}, matrix product states~\cite{Cramer2010a} or multi-scale entangled states~\cite{Landon-Cardinal2012}.
+
+Our error bounds are somewhat unique as well. Most prior work on error bounds used either standard resampling techniques or Bayesian methods~\cite{Jones1991, Buzek1998, Schack2001, Tanaka2005, Audenaert2009, Blume-Kohout2010a}. Very recently, Christandl \& Renner and Blume-Kohout independently derived two closely related approaches for obtaining confidence regions that satisfy or nearly satisfy certain optimality criteria~\cite{Christandl2011, Blume-Kohout2012}. Especially these latter approaches can give very tight error bounds on an estimate, but they can be computationally challenging to implement for large systems. The error bounds which most closely resemble ours are of the ``large deviation type''; see for example the discussion in Ref.~\cite{Sugiyama2011}. This is true for the new improved error bounds, as well as the original bounds proven in Refs.~\cite{Gross2010,Gross2011}. These types of bounds are much easier to calculate in practice, which agrees with our philosophy on computational complexity, but may be somewhat looser than the optimal error bounds obtainable through other more computationally intensive methods such as those of Refs.~\cite{Christandl2011, Blume-Kohout2012}. 
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Notation and Outline}
+%------------------------------------------------------------------------------------------------------------%
+
+
+We denote Pauli operators by $P$ or $P_i$. We define $[n] = \{1,\ldots,n\}$. The norms we use are the standard Euclidean vector norm $\|x\|_2$, the Frobenius norm $\|X\|_F = \sqrt{\Tr(X^\dagger X)}$, the operator norm $\|X\| = \sqrt{\lambda_{\max}(X^\dagger X)}$ and the trace norm $\|X\|_{\tr} = \Tr\abs{X}$, where $\abs{X} = \sqrt{X^\dagger X}$. The unknown ``true'' state is denoted $\rho$ and any estimators for $\rho$ are given a hat: $\hat\rho$. The expectation value of a random variable $X$ is denoted $\EE X$. We denote by $\HH^d$ the set of $d \times d$ Hermitian matrices.
+
+The paper is organized as follows. In Section~\ref{sec-theory} we detail the estimators and error bounds, then upper bound the sample complexity. In Section~\ref{S:lowerbound} we derive lower bounds on the sample complexity. In Section~\ref{S:cert} we find an efficient method of certifying the state estimate. 
+In Section~\ref{S:numerics} we detail our numerical investigations. We show how our scheme can be applied to quantum channels in Section~\ref{S:process} and conclude in Section~\ref{S:conclusion}.  
+

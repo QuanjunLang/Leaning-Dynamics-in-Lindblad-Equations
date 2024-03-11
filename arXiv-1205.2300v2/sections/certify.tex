@@ -1,0 +1,96 @@
+% !TEX root = ../tradeoff.tex
+
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Certifying the State Estimate}\label{S:cert}
+%------------------------------------------------------------------------------------------------------------%
+
+
+Here we sketch how the technique of \emph{direct fidelity estimation} (DFE), introduced in Refs.~\cite{Flammia2011, daSilva2011} for pure states, can be used to estimate the fidelity between a low rank estimate $\hat\rho$ and the true state $\rho$. The only assumption we make is that $\hat\rho$ is a positive semidefinite matrix with $\Tr(\hat\rho) \le 1$ and $\rank(\hat\rho) = r$. No assumption at all is needed on $\rho$. In fact, we also do not assume that we obtained the estimate $\hat\rho$ from any of the estimators which were discussed previously. Our certification procedure works regardless of how one obtains $\hat\rho$, and so it even applies to the situation where $\hat\rho$ was chosen from a subset of variational ansatz states, as in \cite{Cramer2010a}.
+
+Recall that the main idea of DFE is to take a known pure state $\proj\psi$ and from it define a probability distribution $\Pr(i)$ such that by estimating the Pauli expectation values $\Tr(\rho P_i)$ and suitably averaging it over $\Pr(i)$ we can learn an estimate of  $\bra\psi\rho\ket\psi$. In fact, one does not need to do a full average; simply sampling from the distribution a few times is sufficient to produce a good estimate. 
+
+For non-Hermitian rank-$1$ matrices $\ketbra{\phi_j}{\phi_k}$ instead of pure states, we need a very slight modification of DFE. Following the notation in Ref.~\cite{Flammia2011}, we simply redefine the probability distribution as $\Pr(i) = \abs{\bra{\phi_j}P_i\ket{\phi_k}}^2/d$ and the random variable $X = \Tr(P_i \rho)/\bra{\phi_k}P_i\ket{\phi_j}$. It is easy to check that $\E(X) = \bra{\phi_j}\rho\ket{\phi_k}$ and the variance of $X$ is at most one. Then all of the conclusions in Refs.~\cite{Flammia2011, daSilva2011} hold for estimating the quantity $\bra{\phi_j}\rho\ket{\phi_k}$. In particular, we can obtain an estimate to within an error $\pm \eps$ with probability $1-\delta$ by using only single-copy Pauli measurements and $O(\frac{1}{\eps^2\delta} + \frac{d \log(1/\delta)}{\eps^2})$ copies of $\rho$.
+
+Our next result shows that by obtaining several such estimates using DFE, we can also infer an estimate of the mixed state fidelity between an unknown state $\rho$ and a low rank estimate $\hat\rho$, given by
+\begin{align}\label{E:fidelity-def}
+	F(\rho,\hat\rho) = \bigl[\Tr \sqrt{G}\bigr]^2\,,
+\end{align}
+where for brevity we define $G = \sqrt{\hat\rho}\rho\sqrt{\hat\rho}$. (Note that some authors use the square root of this quantity as the fidelity. Our definition matches Ref.~\cite{Flammia2011}.) The asymptotic cost in sample complexity is far less than the cost of initially obtaining the estimate $\hat\rho$ when $r$ is sufficiently small compared to $d$.
+
+\begin{theorem}
+Given a state estimate $\hat\rho$ with $\rank(\hat\rho) = r$, the number of copies $t$ of the state $\rho$ required for estimating $F(\rho,\hat\rho)$ to within $\pm\veps$ with probability $1-\delta$ using single-copy Pauli measurements satisfies 
+\begin{align}
+	t=O\left(\frac{r^5}{\veps^4}\bigr[d \log(r^2/\delta) + r^2/\delta\bigl]\right) \,.
+\end{align}
+\end{theorem}
+\begin{proof}
+The result uses the DFE protocol of Refs.~\cite{Flammia2011, daSilva2011}, modified as mentioned above, where the states $\ket{\phi_j}$ are the eigenstates of $\hat\rho$.
+
+Expand $\hat\rho$ in its eigenbasis as $\hat\rho = \sum_{j=1}^r \lambda_j \ket{\phi_j}\!\bra{\phi_j}$.  Then we have 
+\begin{align}
+	G = \sum_{j,k=1}^r \sqrt{\lambda_j \lambda_k} \bra{\phi_j} \rho \ket{\phi_k}\ket{\phi_j}\!\bra{\phi_k} \,.
+\end{align}
+
+For all $1\leq j\leq k\leq r$, we use direct fidelity estimation to obtain an estimate $\hat{g}_{jk}$ of the matrix element $\bra{\phi_j}\rho\ket{\phi_k}$, up to some additive error $\eps_{jk}$ that is bounded by a constant, $\abs{\eps_{jk}}\le\eps_0$. 
+
+If each estimate is accurate with probability $1-2 \delta/(r^2+r)$, then by the union bound the probability that they are all accurate is at least $1-\delta$. The total number of copies $t$ required for this is 
+\begin{align}
+	t=O\left(\frac{r^2}{\eps_0^2}\bigr[d \log(r^2/\delta) + r^2/\delta\bigl]\right) \,.
+\end{align}
+
+Let $\hat{g}_{jk} = \hat{g}_{kj}^*$, and let 
+\begin{align}
+	\hat{G} = \sum_{j,k=1}^r \sqrt{\lambda_j \lambda_k} \hat{g}_{jk} \ket{\phi_j}\!\bra{\phi_k}
+\end{align}
+be our estimate for $G$.  Finally, let $\hat{G}^+ = [\hat{G}]_+$ be the positive part of the Hermitian matrix $\hat{G}$, and let $\hat{F} = \bigl[\Tr\sqrt{\hat{G}^+}\bigr]^2$ be our estimate of the fidelity $F(\rho,\hat\rho)$. Note that we may assume that $\hat F \le 1$, since if it were larger, we can only improve our estimate by just truncating it back to 1. 
+
+We now bound the error of this fidelity estimate.  We can write $\hat{G}$ as a perturbation of $G$, $\hat{G} = G+E$, where 
+\begin{align}
+	E = \sum_{j,k=1}^r \sqrt{\lambda_j \lambda_k} \eps_{jk} \ket{\phi_j}\!\bra{\phi_k} \,.
+\end{align}
+First notice that the Frobenius norm of this perturbation is small,
+\begin{align}
+	\norm{E}_F = \biggl(\sum_{j,k} \lambda_j \lambda_k \abs{\eps_{jk}}^2 \biggr)^{1/2} \le \eps_0 \biggl\vert\sum_j \lambda_j \biggr\rvert = \eps_0 \,.
+\end{align}
+(If $\hat\rho$ is subnormalized, then this last equality becomes an inequality.)
+
+Next observe that
+\begin{align*}
+	\abs{F-\hat F} = \Bigl\lvert \Tr(\sqrt{G} + \sqrt{\hat{G}^+}) \Tr(\sqrt{G} - \sqrt{\hat{G}^+}) \Bigr\rvert \le 2 \Delta \,,
+\end{align*}
+where we define 
+\begin{align}
+	\Delta = \bigl\lvert\Tr(\sqrt{G} - \sqrt{\hat{G}^+})\bigr\rvert \,.
+\end{align}
+Using the reverse triangle inequality, we can bound $\Delta$ in terms of the trace norm
+\begin{align}
+	\Delta \le \bigl\lVert\sqrt{G} - \sqrt{\hat{G}^+}\bigr\rVert_\tr \,.
+\end{align}
+Using~\cite[Thm. X.1.3]{Bhatia1996} in the first step, we find that
+\begin{align*}
+	\bigl\lVert\sqrt{G} - \sqrt{\hat{G}^+}\bigr\rVert_\tr \le 
+	\Bigl\lVert\sqrt{\abs{G -\hat{G}^+}}\,\Bigr\rVert_\tr \le 
+	\sqrt{r}\sqrt{\bigl\lVert G -\hat{G}^+\bigr\rVert_\tr}\,,
+\end{align*}
+where the second bound follows from the Cauchy-Schwarz inequality on the vector of eigenvalues of $\abs{G -\hat{G}^+}$. Using the Jordan decomposition of a Hermitian matrix into a difference of positive matrices $X = [X]_+ - [X]_-$, we can rewrite $G-\hat{G}^+$ as
+\begin{align}
+	G-\hat{G}^+ = G-[G+E]_+ = -\eps - [G+E]_- \,.
+\end{align}
+Then by the triangle inequality and positivity of $G$, 
+\begin{align}
+	\norm{G-\hat{G}^+}_\tr \le \norm{E}_\tr + \norm{[G+E]_-}_\tr \le 2 \norm{E}_\tr\,.
+\end{align}
+Using the standard estimate $\norm{E}_\tr \le \sqrt{r}\norm{E}_F$, we find
+\begin{align}
+	\Delta \le r^{3/4} \sqrt{2 \eps_0} \,.
+\end{align}
+This gives our desired error bound, albeit in terms of $\eps_0$ instead of the final quantity $\veps$. To get our total error to vanish, we take $\veps = 2 r^{3/4} \sqrt{2 \eps_0}$, which gives us the final scaling in the sample complexity.
+\end{proof}
+
+As a final remark, we note that by computing $\Delta$ for the special case $\hat\rho = \rho = \one/r$, $\eps = \eps_0 \one/r$, we find that 
+\begin{align}
+	\Delta = \sqrt{1+r \eps_0}-1 \,,
+\end{align}
+so the error bound for this protocol is tight with respect to the scaling in $\eps_0$ (and hence $\veps$). However, we cannot rule out that there are other protocols that achieve a better scaling. Also, it seems that the upper bound for the current protocol with respect to $r$ could potentially be improved by a factor of $r$ with a more careful analysis.
+

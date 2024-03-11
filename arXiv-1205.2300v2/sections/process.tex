@@ -1,0 +1,86 @@
+% !TEX root = ../tradeoff.tex
+
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Process Tomography}\label{S:process}
+%------------------------------------------------------------------------------------------------------------%
+
+
+Compressed sensing techniques can also be applied to quantum \textit{process} tomography.  Here, our method has an advantage when the unknown quantum process has small Kraus rank, meaning it can be expressed using only a few Kraus operators.  This occurs, for example, when the unknown process consists of unitary evolution (acting globally on the entire system) combined with local noise (acting on each qubit individually, or more generally, acting on small subsets of the qubits).
+
+Consider a system of $n$ qubits, with Hilbert space dimension $d = 2^n$.  Let $\calE$ be a completely positive (CP) map from $\CC^{d\times d}$ to $\CC^{d\times d}$, and suppose that $\calE$ has Kraus rank $r$.  Using compressed sensing, we will show how to characterize $\calE$ using $m = O(r d^2 \log d)$ settings.  (For comparison, standard process tomography requires $d^4$ settings, since $\calE$ contains $d^4$ independent parameters in general.)  Furthermore, our compressed sensing method requires only the ability to prepare product eigenstates of Pauli operators and perform Pauli measurements, and it does not require any ancilla qubits.
+
+We remark that, except for the ancilla-assisted method, just the notion of ``measurement settings'' for process tomography does not capture all of the complexity because of the need to have an \emph{input} to the channel. Here we define one ``input setting'' to be a basis of states from which the channel input should be sampled uniformly. Then the total number of settings $m$ is the sum of the number of measurement settings (Paulis, in our case) and input settings. This definition justifies the claim that the number of settings for our compressed process tomography scheme is $m = O(rd^2 \log d)$. 
+
+The analysis here focuses entirely on the number of settings $m$. We forgo a detailed analysis of $t$, the sample complexity, and instead leave this open for future work.
+
+Note that there is a related set of techniques for estimating an unknown process that is \textit{elementwise sparse} with respect to some known, experimentally accessible basis~\cite{Shabani2011}.  These techniques are not directly comparable to ours, since they assume a greater amount of prior knowledge about the process, and they use measurements that depend on this prior knowledge.  We will discuss this in more detail at the conclusion of this section.
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Our Method}
+%------------------------------------------------------------------------------------------------------------%
+
+
+First, recall the Jamio\l{}kowski isomorphism~\cite{Jamiolkowski1972}:  the process $\calE$ is completely and uniquely characterized by the state 
+\[
+	\rho_\calE = (\calE\ox\calI)(\ket{\psi_0}\bra{\psi_0}), 
+\]
+where $\ket{\psi_0} = \frac{1}{\sqrt{d}} \sum_{j=1}^{d} \ket{j}\ox\ket{j}$.  Note that when $\calE$ has Kraus rank $r$, the state $\rho_\calE$ has rank $r$.  This immediately gives us a way to do compressed quantum process tomography: first prepare the Jamio\l{}kowski state $\rho_\calE$ (by adjoining an ancilla, preparing the maximally entangled state $\ket{\psi_0}$, and applying $\calE$); then do compressed quantum state tomography on $\rho_\calE$; see Figure \ref{fig-qptancilla}.
+
+\begin{figure}
+\input{figures/qptancilla}
+\caption{\label{fig-qptancilla}Compressed quantum process tomography using an ancilla.  The quantum circuit represents a single measurement setting, where one measures the observable $P_A$ on the system and $P_B$ on the ancilla.}
+\end{figure}
+
+We now show a more direct implementation of compressed quantum process tomography that is equivalent to the above procedure, but does not require an ancilla. Observe that in the above procedure, we need to estimate expectation values of the form 
+\begin{equation*}
+\Tr\bigl((P_A\ox P_B) \rho_\calE\bigr) = \Tr\bigl((P_A\ox P_B) (\calE\ox\calI) (\ket{\psi_0}\bra{\psi_0})\bigr), 
+\end{equation*}
+where $P_A$ and $P_B$ are Pauli matrices.  By using the Kraus decomposition, it is straightforward to derive the equivalent expression
+\begin{align}\label{eqn-qpt-ev}
+	\Tr((P_A \ox P_B) \rho_\calE) = \frac{1}{d} \Tr(P_A \calE(\overline{P_B})), 
+\end{align}
+where the bar denotes complex conjugation in the standard basis.
+
+%\begin{equation*}
+%\begin{split}
+%\Tr((P_A&\tnsr P_B) \rho_\calE) \\
+% &= \sum_\ell \Tr[((P_A K_\ell) \tnsr P_B) \ket{\psi_0}\bra{\psi_0} (K_\ell^\dagger \tnsr I)] \\
+% &= \sum_\ell \bra{\psi_0} ((K_\ell^\dagger P_A K_\ell) \tnsr P_B) \ket{\psi_0} \\
+% &= \sum_\ell \frac{1}{d} \sum_{j,j'=0}^{d-1} \bra{j}P_B\ket{j'} \bra{j} K_\ell^\dagger P_A K_\ell \ket{j'} \\
+% &= \sum_\ell \frac{1}{d} \sum_{j,j'=0}^{d-1} \bra{j'}\overline{P_B}\ket{j} \bra{j} K_\ell^\dagger P_A K_\ell \ket{j'} \\
+% &= \sum_\ell \frac{1}{d} \Tr(\overline{P_B} K_\ell^\dagger P_A K_\ell) \\
+% &= \sum_\ell \frac{1}{d} \Tr(P_A K_\ell \overline{P_B} K_\ell^\dagger)
+% = \frac{1}{d} \Tr(P_A \calE(\overline{P_B})), 
+%\end{split}
+%\end{equation*}
+%where we used the Kraus-operator representation $\calE(\rho) = \sum_\ell K_\ell \rho K_\ell^\dagger$, and the fact that $\bra{j}P_B\ket{j'} = \overline{\bra{j'}P_B^\dagger\ket{j}} = \bra{j'}\overline{P_B}\ket{j}$ (since $P_B$ is Hermitian, and $\ket{j}$, $\ket{j'}$ are real).  
+
+We now show how to estimate the expectation value (\ref{eqn-qpt-ev}).  Let $\lambda_j$ and $\ket{\phi_j}$ denote the eigenvalues and eigenvectors of $\overline{P_B}$.  Then we have 
+\begin{equation*}
+\Tr((P_A\ox P_B) \rho_\calE)
+ = \frac{1}{d} \sum_{j=1}^{d} \lambda_j \Tr(P_A \calE(\ket{\phi_j}\bra{\phi_j})).
+\end{equation*}
+To estimate this quantity, we repeat the following experiment many times, and average the results:  choose $j\in [d]$ uniformly at random, prepare the state $\ket{\phi_j}$, apply the process $\calE$, measure the observable $P_A$, and multiply the measurement result by $\lambda_j$.  (See Figure \ref{fig-qptdirect}.)  In this way, we learn the expectation values of the Jamio\l{}kowski state $\rho_\calE$ without using an ancilla.  We then use compressed quantum state tomography to learn $\rho_\calE$, and from this we recover $\calE$.
+
+\begin{figure}
+\input{figures/qptdirect}
+\caption{\label{fig-qptdirect}Compressed quantum process tomography, implemented directly without an ancilla.  Here one prepares a random eigenstate of $\overline{P_B}$, applies the process $\calE$, and measures the observable $P_A$ on the output.}
+\end{figure}
+
+
+%------------------------------------------------------------------------------------------------------------%
+\subsection{Related Work\label{S:process-related-work}}
+%------------------------------------------------------------------------------------------------------------%
+
+
+Our method is somewhat different from the method described in Ref.~\cite{Shabani2011}. Essentially the difference is that our method works for any quantum process with small Kraus rank, whereas the method of Shabani \textit{et al}.\ works for a quantum process that is elementwise sparse in a known basis (provided this basis is experimentally accessible in a certain sense). The main advantage of the Shabani \textit{et al}.\ method is that it can be much faster: for a quantum process $\calE$ that is $s$-sparse (i.e., has $s$ nonzero matrix elements), it requires only $O(s\log d)$ settings. The main disadvantage is that it requires more prior knowledge about $\calE$, and is more difficult to apply.  While it has been demonstrated in a number of scenarios, there does not seem to be a general recipe for designing measurements that are both experimentally feasible and effective in the sparse basis of $\calE$.
+
+To clarify these issues, we now briefly review the Shabani \textit{et al}.\ method.  We assume that we know a basis $\Gamma = \set{\Gamma_\alpha \;|\; \alpha \in [d^2]}$ in which the process $\calE$ is $s$-sparse.  For example, when $\calE$ is close to some unitary evolution $U$, one can construct $\Gamma$ using the SVD basis of $U$.  This guarantees that, if $\calE$ contains no noise, it will be perfectly sparse in the basis $\Gamma$. However, in practice, $\calE$ will contain noise, which need not be sparse in the basis $\Gamma$; any non-sparse components will not in general be estimated accurately.  The success of the Shabani \textit{et al}.\ method therefore rests on the assumption that the \textit{noise} is also sparse in the basis $\Gamma$. Although this assumption has been verified in a few specific scenarios, it seems less clear why it should hold in general. By comparison, our method simply assumes that the noise is described by a process matrix that is low rank; this can be rigorously justified for any noise process that involves only local interactions or few-body processes.
+
+The other complication with the Shabani \textit{et al}.\ method concerns the design of the state preparations and measurements. On one hand, these must satisfy the RIP condition for $s$-sparse matrices over the basis $\Gamma$; on the other hand, they must be easy to implement experimentally. This has been demonstrated in some cases, by using states and measurements that are ``random'' enough to show concentration of measure behaviors, but also have tensor product structure. However, these constructions are not guaranteed to work in general for an arbitrary basis $\Gamma$.
+
+We leave open the problem of doing a comparative study between these and other methods~\cite{Mohseni2006,Mohseni2007}, akin to Ref.~\cite{Mohseni2008}.
+
+

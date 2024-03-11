@@ -1,0 +1,245 @@
+% !TEX root = ../tradeoff.tex
+
+
+%------------------------------------------------------------------------------------------------------------%
+\section{Lower Bounds}\label{S:lowerbound}
+%------------------------------------------------------------------------------------------------------------%
+
+
+How good are the sample complexities of our algorithms? Here we go a long way toward answering this question by proving nearly tight lower bounds on the sample complexity for generic rank $r$ quantum states using single-copy Pauli measurements. Previous work on single-copy lower bounds has only treated the case of pure states~\cite{Flammia2011}. 
+
+Roughly speaking, we show the following, which we will make precise at the end of the section.
+\begin{theorem}[Imprecise formulation]\label{Thm:lower}
+	The number of copies $t$ needs to grow at least as fast as $\Omega\bigl(r^2d^2/\log
+	d\bigr)$ to guarantee a constant trace-norm confidence interval for all
+	rank-$r$ states.
+\end{theorem}
+
+The argument proceeds in three steps. First, we fix our notion of risk to be the minimax risk, meaning we seek to minimize our worst case error according to some error metric such as the trace distance. We want to know how many copies of the unknown state we need to make this minimax risk an arbitrarily small constant. For a fixed set of two-outcome measurements, say Pauli measurements, we then show that some states require many copies to achieve this. In particular, these states have the property that they are globally distinguishable (their trace distance is bounded from below by a constant) but their (Pauli) measurement statistics look approximately the same (each measurement outcome is close to unbiased). The more such states there are, the more copies we need to distinguish between them all using solely Pauli measurements. Finally, we use a randomized argument to show that in fact there are exponentially many such states. This yields the desired lower bound on the sample complexity.
+
+Let $\Sigma$ be some set of density operators. We want to put lower bounds on the performance of any estimation protocol for states in $\Sigma$. (We do not initially restrict ourselves to states with low rank.)
+
+We assume the protocol has access to $t$ copies of an unknown state $\rho\in\Sigma$ on which it performs measurements one by one. At the $i$th step, it has to decide which observable to measure. Let us  restrict ourselves to binary POVM measurements $\{\Pi_i, \Id-\Pi_i\}$, where each $\Pi_i$ satisfies $0\le \Pi_i \le \Id$ and may be chosen from a set $\mathcal{P}$. (We do not initially restrict ourselves to Pauli measurements, either.) We allow the choice of the $i$th observable to depend on the previous outcomes. We refer to the random variables which jointly describe the choice of the $i$th measurement and its random outcome as $Y_i$. At the end, these are mapped to an estimate $\hat\rho(Y_1, \dots, Y_t)\in \Sigma$.
+
+In other words, an estimation protocol is specified by a set of functions
+\begin{align*}
+	\Pi_i&: Y_1, \dots, Y_{i-1} \mapsto \mathcal{P}\,, \\
+	\hat\rho&: Y_1, \dots, Y_t \mapsto \Sigma\,.
+\end{align*}
+
+Consider a distance measure $\Delta:\Sigma\times\Sigma \to \RR$ on the states in $\Sigma$. (For example, this could be the trace distance or the infidelity; we need not specify.) Suppose that the maximum deviation we wish to tolerate between our unknown state and the estimate is given by $\eps>0$. Now define the minimax risk
+\begin{align}\label{eqn:protocol}
+	M^*(\eps) = \inf_{\langle \hat \rho, \Pi_i \rangle} 
+	\sup_{\rho\in\Sigma} \Pr\bigl[ \Delta(\hat\rho(Y), \rho) > \eps\bigr],
+\end{align}
+where the infimum is over all estimation procedures $\langle \hat
+\rho, \Pi_i\rangle$ on $t$ copies with estimator $\hat\rho$ and
+choice of observables given by $\Pi_i$. That is, we are considering the ``best'' protocol to be the one whose worst-case probability of deviation is the least. 
+
+The next lemma shows that if there are a large number of states in $\Sigma$ which are far apart (by at least $\eps$), and whose statistics look nearly random for all measurements in $\P$, then the number of copies $t$ must be large too to avoid having a large minimax risk.
+
+\begin{lemma}\label{minimaxlemma}
+%	Let $\Sigma$ be a set of density operators. Let 
+%	\begin{equation*}
+%		d: \Sigma \times \Sigma \to \RR
+%	\end{equation*}
+%	be some distance measure on $\Sigma$.
+%	Let $\mathcal{P}$ be a set of POVM elements: 
+%	\begin{equation*}
+%		\forall\, \Pi\in\mathcal{P}: \> 0 \leq \Pi \leq \Id.
+%	\end{equation*}
+	Assume there are states $\rho_1, \dots, \rho_s\subset\Sigma$ such
+	that 
+	\begin{align*}
+		&\forall\>i\neq j: \> \Delta(\rho_i, \rho_j) \geq \eps \,,\\
+		&\forall\>i,\forall\, \Pi \in \mathcal{P}:\> \bigl|\tr \rho_i \Pi - \tfrac12\bigr| \leq \alpha \,.
+	\end{align*}
+	Then the minimax risk as defined in (\ref{eqn:protocol}) fulfills
+	\begin{align*}
+		M^*(\eps)>1-\frac{4\alpha^2 t + 1}{\log s}.
+	\end{align*}
+\end{lemma}
+
+\begin{proof}
+	Let $X$ be a random variable taking values uniformly in
+	$[s]$. Let $Y_1, \dots, Y_t$ be random variables, $Y_i$
+	describing the outcome of the $i$th measurement performed on
+	$\rho_X$. Define 
+	\begin{equation*}
+		\hat X(Y) := \arg \min_i \Delta(\hat\rho(Y),\rho_i).
+	\end{equation*}
+	Then 
+	\begin{equation}\label{eqn:lb1}
+		\Pr\bigl[ \Delta(\hat\rho(Y),\rho_i) > \eps \bigr] 
+		\geq
+		\Pr\bigl[ \hat X(Y) \neq X \bigr] \,.
+	\end{equation}
+
+	Now combine Fano's inequality
+	\begin{align*}
+		H(X|\hat X)\leq	1+
+		\Pr[ \hat X \neq X ] \log s,
+	\end{align*}
+	the data processing inequality 
+	\begin{equation*}
+		%H(X|\hat X)\geq H(X|Y),
+		I(X;\hat X(Y))\leq I(X;Y),
+	\end{equation*}
+	in terms of the mutual information $I(X;Y):=H(X)-H(X|Y)$,
+	and the fact that $H(X)=\log s$ to get
+	\begin{align*}
+		\Pr[ \hat X(Y) \neq X ]
+		&\geq
+		\frac{H(X|\hat X) - 1}{\log s} \\
+		&=
+		\frac{H(X)-I(X;\hat X) - 1}{\log s} \\
+		&=
+		1-\frac{I(X;\hat X) + 1}{\log s} \\
+		&\geq
+		1-\frac{I(X;Y) + 1}{\log s} \\
+		&=
+		1-\frac{ 
+		H(Y) - H(Y|X) + 1}{\log s} \\
+		&\geq
+		1-\frac{ 
+		t - \frac1s \sum_{i=1}^s H(Y|X=i) + 1}{\log s}.
+	\end{align*}
+
+	Let $h(p)$ be the binary entropy and recall the standard estimate
+	\begin{equation*}
+		 h(1/2\pm\alpha) \geq (1-4\alpha^2)\,.
+	\end{equation*}
+	Combine that with the chain rule \cite[Theorem~2.5.1]{Cover1991}:
+	\begin{align*}
+		H(Y|X=i) &=
+		\sum_{j=1}^t H(Y_j | Y_{j-1}, \dots, Y_1, X=i) \\
+		&\geq
+		t (1-4\alpha^2).
+	\end{align*}
+	The advertised bound follows.
+\end{proof}
+
+By applying the following lemma $s < \e^{crd}$ times, we can randomly create a set of $s$ states each with rank $r$ that satisfy the conditions of Lemma~\ref{minimaxlemma} in terms of the trace distance and the set of Pauli measurements. 
+
+\begin{lemma}\label{randomized}
+	For any $0< \eps < 1-\frac{r}{d}$, let $\rho_1, \dots, \rho_s$ be normalized\footnote{Normalized to have trace 1.} rank-$r$ projections on $\CC^d$, where $s< \e^{c(\eps) rd}$ and $c(\eps)$ is specified below. Then there exists a normalized rank-$r$ projection $\rho$ such that:
+	\begin{eqnarray}\label{eqn:farApart}
+		&\forall\>i \in [s]:\> \frac{1}{2}\|\rho - \rho_i\|_{\tr} \geq \eps \,,\\
+		\label{eqn:smallPauli}
+		&\forall\>P_k \neq \Id:\> \bigl|\tr\bigl[\frac12(\Id\pm P_k) \rho\bigr]-\frac12\bigr| \leq \alpha \,.
+	\end{eqnarray}
+	Here, $\alpha^2 = O\bigr(\tfrac{\log d}{rd}\bigr)$, the $P_k$ are $n$-qubit Pauli operators, and 
+	\begin{align*}
+		c(\eps) = \frac{\ln(8/\pi)}{2 r d}+ \frac{1}{32}\Bigl[\bigl(1-\tfrac{r}{d}\bigr)-\eps\Bigr]^2\,.
+	\end{align*}
+\end{lemma}
+
+\begin{proof}
+	Let $\rho_0$ be some normalized rank-$r$ projection and choose
+	$\rho$ according to\footnote{For the duration of this proof, the letter $O$ denotes an element of $\mathsf{SO}(d)$ instead of the asymptotic big-$O$ notation.}  
+	\begin{equation*}
+		\rho = O \rho_0 O^T
+	\end{equation*}
+	for a Haar-random $O\in \textsf{SO}(d)$. Here we use the special orthogonal group $\textsf{SO}(d)$ because the analysis becomes marginally simpler than if we use a unitary group. 
+
+	To check (\ref{eqn:farApart}), choose $i \in [s]$ and define
+	$R_i$ to be the projector onto the range of $\rho_i$. Also define the function 
+	\begin{equation*}
+		f: O \mapsto \|\rho_i - O \rho_0 O^T \|_{\tr}\,.
+	\end{equation*}
+	We can bound the magnitude of $f$ using the pinching inequality:
+	\begin{align*}
+		f(O) \geq& \|\rho_i - R_i O \rho_0 O^T R_i\|_{\tr} + \|R_i^\perp O  \rho_0 O^T R_i^\perp\|_{\tr} \\
+           \geq& \tr(\rho_i) -\tr(R_i O \rho_0 O^T R_i) + \tr(R_i^\perp O  \rho_0 O^T R_i^\perp) \\
+		 %=& 1  -\tr R_i O \rho_0 O^T + \tr R_i^\perp O \rho_0 O^T.
+		 =& 1  +\tr\bigl[(R_i^\perp - R_i)O \rho_0 O^T\bigr] \,.
+	\end{align*}
+	From this we can bound the expectation value of $f$ over the special orthogonal group:
+	\begin{align*}
+		\EE\bigl[f(O)\bigr]
+		\geq& 1+ \tr\bigl[(R_i^\perp - R_i) \big( \EE O \rho O^T \big)\bigr]  \\
+		=& 1+ \frac{1}{d} \tr\bigl[(R_i^\perp - R_i) \Id\bigr] \\
+		=& 1 + \frac{d-2r}{d}=2\Bigl(1-\frac{r}{d}\Bigr)\,.
+	\end{align*}
+	Next we get an upper bound of $\frac{4}{\sqrt{r}}$ on the Lipschitz constant of $f$ with respect to the Frobenius norm:
+	\begin{align*}
+	\begin{split}
+		|f(O+\Delta) & - f(O)| \\
+		\leq& 
+		\|(O+\Delta) \rho_0 (O+\Delta)^T - O \rho_0 O^T\|_{\tr} \\
+		\leq& 
+		\|O \rho_0 \Delta^T\|_{\tr} + \|\Delta\rho_0
+		O^T\|_{\tr} + \|\Delta \rho_0 \Delta^T\|_{\tr} \\
+		=& 
+		2\|\Delta \rho_0\|_{\tr}  +
+		\tr(\Delta \rho_0 \Delta^T) \\
+		\leq& 
+		2\sqrt r \|\Delta \rho_0\|_F + \tr(\rho_0 \Delta \Delta^T) \\
+		\leq& 
+		2\sqrt r \|\Delta\|_F \|\rho_0\| + \frac{1}{r} \|\Delta\| \|\Delta^T\|_{\tr}  \\
+		\leq &
+		\frac{2}{\sqrt r} \|\Delta\|_F + \frac{2}{r} \sqrt{r} \|\Delta\|_F
+		\leq 
+		\frac4{\sqrt r} \|\Delta\|_F \,,
+	\end{split}
+	\end{align*}
+	where we use $\|\Delta\| \le 2$ in the last line, which follows from the triangle inequality and the fact that any $\Delta$ can be written as a difference $\Delta = O'-O$ for $O' \in \mathsf{SO}(d)$.
+	
+	From these ingredients, we can invoke L\'evy's Lemma on the special orthogonal group \cite[Theorem 6.5.1]{Milman1986} to get that for all $t>0$,
+	\begin{align*}
+		\Pr\bigl[ \| \rho_i - \rho \|_{\tr} < 2(1-r/d)- t \bigr]
+		\leq
+		\e^{c_1} \exp\Bigl(- \frac{c_2 t^2 rd}{16}\Bigr),
+	\end{align*}
+	where the constants are given by $c_1 = \ln\bigl(\sqrt{\pi/8}\bigr)$ and $c_2 = 1/8$.
+	Now choose $t = 2(1-r/d) - 2\eps$ and apply the union bound to obtain
+	\begin{align*}
+		\Pr\bigl[ (\ref{eqn:farApart}) & \text{ does not hold}\bigr] \\ 
+		<\, & \e^{c(\eps) rd} \Pr\bigl[ \| \rho_i - \rho \|_{\tr} < 2(1-r/d)- t  \bigr]\\
+		\leq & \exp\mathclose{}\bigg(rd\Bigl[c(\eps)-\tfrac{c_2 t^2 }{16}\Big]+ c_1\bigg)=1.
+	\end{align*}
+	The upper bound on $\eps$ follows from the requirement that $t > 0$. This shows that $\rho$ indeed satisfies Eq.~(\ref{eqn:farApart}).
+
+	Now we move on to Eq.~(\ref{eqn:smallPauli}). For any non-identity Pauli
+	matrix $P_k$, define a function
+	\begin{equation*}
+		f: O \mapsto \tr(P_k O \rho_0 O^T) \,.
+	\end{equation*}
+	Clearly, we have $\EE[f(O)] = 0$. We again wish to bound the rate of change so that we can use L\'evy's Lemma, so we compute
+	\begin{align*}
+		(\mathrm{d}_O f)(\Delta)  
+		=& \tr\bigl(\rho_0 O^T P_k  \Delta\bigr) + \tr\bigl(P_k O \rho_0 \Delta^T\bigr) \\
+		=& \tr\bigl[(\rho_0 O^T P_k + \rho_0^T O^T P_k^T) \Delta \bigr]\,,
+	\end{align*}
+	which implies that
+	\begin{equation*}
+		\|\nabla f(O)\|_2 =  
+		\|\rho_0 O^T P_k + \rho_0^T O^T P_k^T \|_F 
+		\leq \frac{2}{\sqrt{r}} \,. 
+	\end{equation*}
+	L\'evy's Lemma then gives for all $t>0$
+	\begin{equation*}
+		\Pr\bigl[ \abs{ \tr P_k \rho } >  t \bigr]
+		\leq
+		\e^{c_1} \exp\biggl(- \frac{c_2 t^2 rd}{4}\biggr).
+	\end{equation*}
+	Choosing $t = 2\alpha$, and $\alpha^2 = 4\ln(d^4 \pi/8)/(rd)$, then the union bound gives us
+	\begin{align*}
+		\Pr\bigl[ (\ref{eqn:smallPauli}) & \text{ does not hold}\bigr] \\
+		< &\, d^2 \Pr\bigl[ |\tr P_k \rho| > 2\alpha\bigr] \\
+		\leq& \exp\Bigl(2\ln d -\frac{c_2(2\alpha)^2rd}{4}+ c_1\Bigr) = 1\,,
+	\end{align*}
+	from which the lemma follows.
+	\end{proof}
+
+We remark that a version of Lemma~\ref{randomized} continues to hold even if we can adaptively choose from as many as $2^{O(n)}$ additional measurements which are globally unitarily equivalent to Pauli measurements. 
+
+Combining the two previous lemmas yields a precise formulation of Theorem \ref{Thm:lower}.
+\begin{theorem}[Precise version of Theorem~\ref{Thm:lower}]
+	Fix $\eps \in (0, 1-\tfrac{r}{d})$ and $\delta \in [0,1)$. Then for our bound to allow for $M^*(\eps) \le \delta$ we must have that the number of copies $t$ of $\rho$ grows like
+	\begin{equation*}
+		t = \Omega\biggl(\frac{r^2 d^2}{\log d}\biggr)\,,
+	\end{equation*}
+	where the implicit constant depends on $\delta$ and $\eps$.
+\end{theorem}
+
