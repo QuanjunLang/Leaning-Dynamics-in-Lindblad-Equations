@@ -1,4 +1,4 @@
-function result = multi_mat_als(all_rho, r, varargin)
+function result = multi_mat_als_update_rank(all_rho, r_0, varargin)
 
 
 %%
@@ -10,7 +10,7 @@ addOptional(p, 'true_para', 0);
 addOptional(p, 'rank_threshold', 1e-6);
 addOptional(p, 'plotON', 0);
 
-parse(p,all_rho, r, varargin{:});
+parse(p,all_rho, r_0, varargin{:});
 
 true_para          = p.Results.true_para;
 rank_threshold     = p.Results.rank_threshold;
@@ -18,33 +18,31 @@ plotON             = p.Results.plotON;
 
 
 
-
-
-
 [n, ~, T_temp, M] = size(all_rho);
 T = T_temp - 1;
 
 % r = 5;
-niter = 500;
+niter = 20;
 
-all_A = zeros(n, n, r, niter);      % All steps for A
-all_B = zeros(n, n, r, niter);      % All steps for B
-all_V = zeros(n, n, r, niter);      % All steps for V, V is a formal average of A and B', because that is what they are
+% all_A = zeros(n, n, r_0, niter);      % All steps for A
+% all_B = zeros(n, n, r_0, niter);      % All steps for B
+% all_V = zeros(n, n, r_0, niter);      % All steps for V, V is a formal average of A and B', because that is what they are
 all_L = zeros(n^2, n^2, niter);     % All steps for L
 all_E = zeros(n^2, n^2, niter);
 
-% all_A = cell(niter, 1);
-% all_B = cell(niter, 1);
-% all_V = cell(niter, 1);
+all_A = cell(niter, 1);
+all_B = cell(niter, 1);
+all_V = cell(niter, 1);
 
 
 
 loss  = zeros(niter, 1);
 all_rk = zeros(niter, 1);
+all_r = zeros(niter, 1);
 
 
-A_0 = randn(n, n, r) + 1i*randn(n, n, r);
-B_0 = randn(n, n, r) + 1i*randn(n, n, r);
+A_0 = randn(n, n, r_0) + 1i*randn(n, n, r_0);
+B_0 = randn(n, n, r_0) + 1i*randn(n, n, r_0);
 
 
 if isa(true_para, 'struct')              % If true para information is provided
@@ -68,30 +66,30 @@ end
 % A_0 = A_true; % sanity check of starting from truth
 for i = 1:niter
     % Estimate B first
-    regmat_B_given_A = zeros(M*T*n^2, r*n^2);
+    regmat_B_given_A = zeros(M*T*n^2, r_0*n^2);
     k = 1;
     for m = 1:M
         for t = 1:T
             rho0 = all_rho(:, :, t, m);
             PP = superkron(eye(n, n), pagemtimes(A_0, rho0));
-            PPA = reshape(PP, [n^2. n^2*r]);
+            PPA = reshape(PP, [n^2. n^2*r_0]);
             regmat_B_given_A((k-1)*n^2+1:k*n^2, :) = PPA;
             k = k+1;
         end
     end
     bB = vec(all_rho(:, :, 2:end, :));
     vec_B_est = regmat_B_given_A \ bB;
-    B_0 = reshape(vec_B_est, [n, n, r]);
-    all_B(:, :, :, i) = B_0;
+    B_0 = reshape(vec_B_est, [n, n, r_0]);
+    % all_B(:, :, :, i) = B_0;
 
     % Estimate A next
-    regmat_A_given_B = zeros(M*T*n^2, r*n^2);
+    regmat_A_given_B = zeros(M*T*n^2, r_0*n^2);
     k = 1;
     for m = 1:M
         for t = 1:T
             rho0 = all_rho(:, :, t, m);
             PP = superkron(eye(n, n), pagemtimes(permute(B_0, [2, 1, 3]), permute(rho0, [2,1,3,4])));
-            PPA = reshape(PP, [n^2. n^2*r]);
+            PPA = reshape(PP, [n^2. n^2*r_0]);
             regmat_A_given_B((k-1)*n^2+1:k*n^2, :) = PPA;
             k = k+1;
         end
@@ -99,24 +97,24 @@ for i = 1:niter
 
     bA = vec(permute(all_rho(:, :, 2:end, :), [2,1,3,4]));
     vec_A_est = regmat_A_given_B \ bA;
-    A_0 = permute(reshape(vec_A_est, [n, n, r]), [2,1,3]);
-    all_A(:, :, :, i) = A_0;
+    A_0 = permute(reshape(vec_A_est, [n, n, r_0]), [2,1,3]);
+    % all_A(:, :, :, i) = A_0;
 
     % balance A and B to contruct V
     Const = A_0 ./ conj(permute(B_0, [2, 1, 3]));
     V_0 = A_0./sqrt(Const);
-    all_V(:, :, :, i) = V_0;
+    % all_V(:, :, :, i) = V_0;
 
     % contruct L
     L_0 = zeros(n^2, n^2);
-    for k = 1:r
+    for k = 1:r_0
         L_0 = L_0 + kron(B_0(:, :, k).', A_0(:, :, k));
     end
     all_L(:, :, i) = L_0;
     
     % contruct E
     E_0 = zeros(n^2, n^2);
-    for k = 1:r
+    for k = 1:r_0
         E_0 = E_0 + vec(B_0(:, :, k))*vec(permute(A_0(:, :, k), [2, 1])).';
     end
     all_E(:, :, i)  = E_0;
@@ -124,17 +122,18 @@ for i = 1:niter
     all_E_svd(:, i) = svd(E_0);
     
     
-    % %% reduce the rank 
-    % [UU, S, VV] = svd(E_0);
-    % r_updated = sum(diag(S)>rank_threshold);
-    % if r_updated < r
-    %     BB_0 = UU(:, 1:r_updated)*S(1:r_updated, 1:r_updated);
-    %     AA_0 = VV(:, 1:r_updated);
-    % 
-    %     A_0 = permute(reshape(AA_0, [n, n, r_updated]), [2, 1, 3]);
-    %     B_0 = reshape(BB_0, [n, n, r_updated]);
-    % end
-
+    %% reduce the rank 
+    [UU, S, VV] = svd(E_0);
+    r_updated = sum(diag(S)>rank_threshold);
+    if r_updated < r_0
+        BB_0 = UU(:, 1:r_updated)*S(1:r_updated, 1:r_updated);
+        AA_0 = VV(:, 1:r_updated);
+    
+        A_0 = permute(reshape(AA_0, [n, n, r_updated]), [2, 1, 3]);
+        B_0 = reshape(BB_0, [n, n, r_updated]);
+    end
+    r_0 = r_updated;
+    all_r(i) = r_0;
 
     %% Compute error at each step, if true parameters are provided
     if isa(true_para, 'struct')
@@ -142,14 +141,14 @@ for i = 1:niter
         err_E(i) = norm(E_0 - E_true, 'fro')/n;
         % Note that it is meaningless to compare A_true and A_0 with different r
 
-        % if r == r_true
+        % if r_0 == r_true
         %     err_A(i) = norm(A_0 - A_true, 'fro');
         %     err_B(i) = norm(B_0 - B_true, 'fro');
         %     % Error of V has to be computed in the sense of SVD because of the
         %     % unitary invarnce, this works when r = 1
         %     % When r is large, this is not enough, since V are not unique
         %     err_V(i) = 0;
-        %     for k = 1:r
+        %     for k = 1:r_0
         %         err_V(i) = err_V(i) + norm(svd(V_0(:, :, k)) - svd(A_true(:, :, k)), 'fro');
         %     end
         % end
@@ -161,7 +160,7 @@ for i = 1:niter
     for t = 1:T
         all_rho0 = all_rho(:, :, t, :);
         all_rho1 = zeros(n, n, 1, M);
-        for k = 1:r
+        for k = 1:r_0
             temp = pagemtimes(A_0(:, :, k), all_rho0);
             all_rho1 = all_rho1 + pagemtimes(temp, B_0(:, :, k));
         end

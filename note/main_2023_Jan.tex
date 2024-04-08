@@ -1,0 +1,280 @@
+\documentclass[10pt]{article}  % [12pt] option for the benefit of aging markers
+\usepackage{amssymb}
+\usepackage{amsthm}    % amssymb package contains more mathematical symbols
+\usepackage{graphicx}          % graphicx package enables you to paste in graphics
+\usepackage{amsmath}         % best maths package on offer
+\usepackage{mathtools}
+
+
+%\mathtoolsset{showonlyrefs}		% Only show the label of equations that have been referenced
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{dsfont}
+\usepackage{listings}
+\usepackage{titlepic}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{enumerate}
+\usepackage{todonotes}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{showlabels}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{enumitem}% http://ctan.org/pkg/enumitem
+\usepackage{braket}
+\usepackage{physics}
+
+\usepackage[
+backend=bibtex,
+style=alphabetic,
+isbn=false,
+%editor=false,
+]{biblatex}
+\addbibresource{Lindblad.bib}
+
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex, overwrite]{
+    \map{
+      \step[fieldset=address, null]
+      \step[fieldset=editor, null]
+      \step[fieldset=location, null]
+    }
+  }
+}
+
+
+%\usepackage[style=ieee]{biblatex}
+\AtEveryBibitem{%
+  	\clearfield{issn} % Remove issn
+  	\clearfield{doi} % Remove doi
+  	\clearfield{urldate}
+	\clearfield{month}
+	\clearfield{adress}
+  	\ifentrytype{online}{}{% Remove url except for @online
+    \clearfield{url}
+  }
+}
+%\renewbibmacro*{url+urldate}{}
+%\renewbibmacro*{editor}{}
+%\renewbibmacro*{editors}{}
+%\renewbibmacro{in:}{}
+
+
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor = blue,
+}
+
+\geometry{left = 2.5cm, right=2.5cm, top=1cm, bottom=1.5cm}
+
+%%%%%%%%%%%%%% symbols %%%%%%%%%%%%%
+\newcommand{\eps}{\varepsilon}
+%%%%%%%%%%%%%%%%%%%% Theorem Environments %%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{Lem}[thm]{Lemma}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}[thm]{Proposition}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+\newtheorem{ex}[thm]{Example}
+\numberwithin{equation}{section}
+%%%%%%%%%%%%%%%%%% bold letters %%%%%%%%%
+\newcommand{\bSig}{\boldsymbol{\Sigma}}
+\newcommand{\bLam}{\boldsymbol{\Lambda}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bdelta}{\boldsymbol{\delta}}
+\newcommand{\bdeta}{\boldsymbol{\eta}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bxi}{\boldsymbol{\xi}}
+%%%%%%%%%%%%%%%%%% fonts %%%%%%%%%%%%%%%%
+\newcommand{\vect}[1] {\pmb{#1}}
+\newcommand{\mat}[1]{\pmb{#1}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+%%%%%%%%%%%%%%%%%% brackets %%%%%%%%%%%%%%
+\newcommand{\rbracket}[1]{\left(#1\right)}      %round
+\newcommand{\sbracket}[1]{\left[#1\right]}      %square    
+\newcommand{\cbracket}[1]{\left\{#1\right\}}      %curve
+%\newcommand{\norm}[1]{\left\|#1\right\|}
+%\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\innerp}[1]{\langle{#1}\rangle}
+\newcommand{\dbinnerp}[1]{\langle\hspace{-1mm}\langle{#1}\rangle \hspace{-1mm}\rangle}
+\newcommand{\floor}[1]{\lfloor{#1}\rfloor}
+%%%%%%%%%%%%%%%%%%% mathcal %%%%%%%%%%%%%
+\def\mH{\mathcal{H}}
+\def\mL{\mathcal{L}}
+\def\mE{\mathcal{E}}
+\def\mS{\mathcal{S}}
+\def\mN{\mathcal{N}}
+\def\mD{\mathcal{D}}
+\def\mV{\mathcal{V}}
+\def\mB{\mathcal{B}}
+%%%%%%%%%%%%%%%%%% words operation %%%%%%%
+%\def\supp{\mathrm{supp}}
+%\def\span{\mathrm{span}}
+\def\div{\mathrm{div}}
+%%%%%%%%%%%%%%%%%% mathbb %%%%%%%%%%%%%      
+\def\Rn{\mathbb{R}^n}
+\def\R{\mathbb{R}}          
+\def\C{\mathbb{C}}                       
+\def\P{\mathbb{P}}
+%%%%%%%%%%%%%%%%% mathbf %%%%%%%%%%%%%%
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bfm}{\mathbf{m}}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bG}{\mathbf{G}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bDD}{\mathbf{D}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\wbH}{\widetilde{\mathbf{H}}}
+\newcommand{\bL}{\mathbf{L}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bt}{\mathbf{t}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bq}{\mathbf{q}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bK}{\mathbf{K}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\boldeta}{\boldsymbol{\eta}}
+\newcommand{\boldlambda}{\boldsymbol{\lambda}}
+\newcommand{\boldalpha}{\boldsymbol{\alpha}}
+\newcommand{\boldxi}{\boldsymbol{\xi}}
+\newcommand{\boldphi}{\boldsymbol{\varphi}}
+%%%%%%%%%%% text %%%%%%%%%%%%%%%
+\newcommand{\Log}{\text{Log}}
+
+%%%%%%%%%%%%%% comments %%%%%%%%%%%%%%%
+\newcommand{\QL}[1]{\textcolor{cyan}{{#1}}}
+\newcommand{\jl}[1]{\textcolor{red}{[\textsf{JL: #1]}}}
+
+
+
+
+\title{Learning memory kernels in Generalized Langevin Equations}
+\author{Quanjun Lang, Bowen Li, Jianfeng Lu}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\section{Introduction}
+We study the problem of learning in open quantum systems. The goal is to learn the dynamics in the Lindblad quantum master equation (QME)
+\begin{equation}\label{eq_QME_main}
+	\frac{d}{dt} \rho = -i[H, \rho] + \sum_{k = 1}^r (V_k \rho V_k^\dagger - \frac{1}{2} V_k^\dagger V_k \rho - \frac{1}{2} V_k^\dagger V_k \rho)
+\end{equation}
+from observations of the trajectories. Here $H$ is the system Hamiltonian and $V_k$'s are jump operators. The density matrix $\rho \in \R^{n \times n}$ here characterizes the distribution of a quantum $\ket{\psi(t)}$ in the sense that $\mathbb{E}[\ketbra{\psi(t)}{\psi(t)}]$. 
+Here $\ket{\psi(t)} \in \R^n$ itself satisfies the stochastic Schr\"{o}dinger equation
+\begin{equation}
+	d \ket{\psi(t)} = \left( -i H \ket{\psi(t)} - \frac{1}{2}\sum_{k = 1}^r V_k^\dagger V_k \ket{\psi(t)}\right) dt + \sum_{k = 1}^r V_k \ket{\psi(t)} dW^k_t
+\end{equation}
+where $W^k_t$'s are independent Brownian motions.
+
+
+The above solution of the QME can be written as
+\begin{align}\label{eq_QME_Lindbladian}
+	\frac{d}{dt} \rho := \mL \rho =  \mL_H\rho + \mL_L \rho, 
+\end{align}
+where $\mL_H \rho = -i[H, \rho]$ and $\mL_L \rho = \sum_{k = 1}^r (V_k \rho V_k^\dagger - \frac{1}{2} V_k^\dagger V_k \rho - \frac{1}{2} V_k^\dagger V_k \rho)$. The operator $\mL$ is called the Lindbladian superoperators, and solutions of \eqref{eq_QME_Lindbladian} can be expressed using semigroup generated by $\mL$, namely
+\begin{equation}
+	\rho(t) = e^{\mL t}\rho(0).
+\end{equation}
+Then the map $\mV(t) = e^{\mL t}$ is a complete positive trace-preserving map for arbitrary time $t$. By the Choi-Kraus' Theorem, a mapping $\mV:\mB(\R^n) \to \mB(\R^n)$ is completely positive and trace-preserving if and only if it can be expressed as 
+\begin{equation}
+	\mV\rho = \sum_{k}V_k^\dagger \rho V_k
+\end{equation}
+where $\sum_{k}V_kV_k^\dagger = I_\mH$. 
+
+Note that $\rho \in \mB(\R^n)$ and $\mV \in \mB(\mB(\R^n))$ has dimension $n^4$. In practice, we often assume that the chan
+\subsection{Difficulty}
+Firstly, the evaluation of the density requires taking the expectation with respect to an observable, namely
+$$ \innerp{A, \rho}_F = \tr(A \rho) = \expval{A}$$
+where $A = \sum_i a_i \ketbra{a_i}{a_i}$. When observe using $A$, we obtain state $\ket{a_i}$ with probability $a_i$. In practice, we take the empirical distribution of the observed states as the estimated value of $\tr(A, \rho)$. Therefore, the accuracy suffers from the law of large numbers with order $1/\sqrt{N}$, where $N$ is the number of independent trials. With given observable $A$, the original equation \eqref{eq_QME_main} can be written as 
+\begin{equation}
+	\frac{d}{dt} \expval{A}(t) = -i\expval{[A, H]}(t) + \sum_{k = 1}^r \left(\expval{V_k^\dagger A V_k}(t) - \frac{1}{2} \expval{A V_k^\dagger V_k} (t) - \frac{1}{2} \expval{V_k^\dagger V_k A}(t) \right)
+\end{equation}
+
+
+
+Due to the expense of evaluating the states, the derivative term in \eqref{eq_QME_main} is unrealistic to obtain. Since the finite difference 
+$$ \frac{\expval{A}(t + \Delta t) - \expval{A}(t)}{\Delta t} $$ 
+will amplify the error in $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$. The error in the derivative is of order $\Delta t^2 + \frac{\delta}{\Delta t}$, where the first $\Delta t^2 $ is the error in finite difference using midpoint method, and the $\delta$ is the accuracy in the expectation. In order to achieve $\varepsilon$ accuracy in the derivative, we need $\Delta t \leq \sqrt{\varepsilon}$ and both $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$ to have $\delta = \varepsilon^{3/2}$ accuracy, therefore requires $1/\varepsilon^{3/2}$ number of independent trails in evaluating the expectation.
+
+
+
+\section{Literature review}
+
+\subsection{Quantum Chanel tomography}
+\subsection{Lindbladian learning}
+\subsection{Prony method for system eigenvalues}
+\subsection{Matrix completion}
+
+
+\section{Numerical Details}
+
+Given a discrete time mesh $t_n = n \Delta t$, generate data $\rho(t_n)$ using the Python package mesolve. Try to learn the quantum channels of $e^{t_n\mL}$ using the ALS code, and then compare the eigenvalues of each result.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\printbibliography
+
+
+\end{document}

@@ -13,7 +13,7 @@ addPaths
 %
 
 %% True para
-n = 8;          % Dimension of matrix
+n = 4;          % Dimension of matrix
 r = 3;          % rank of summation
 T = 1;         % Total trajectory length
 M = 2*r*n;        % Total number of trajectories
@@ -99,6 +99,7 @@ rho1 = all_rho(ind_1, ind_2, ind_T+1, ind_M);
 temp = zeros(n, n);
 temp(ind_1, ind_2) = 1;
 P = kron(kron(eye(r), temp), rho0);
+P_temp = kron(temp, rho0);
 
 % This is the output using rank 1 matrix point of view
 vec(permute(A_true, [2, 1, 3])).'*P*vec(B_true)
@@ -169,7 +170,6 @@ vec_A_est = regmat_A_given_B \ bA;
 % B_est - B_true
 
 %% Things works with mis specified r
-
 true_para.r_true = r;
 true_para.A_true = A_true;
 true_para.B_true = B_true;
@@ -177,11 +177,17 @@ true_para.K_true = K_true;
 true_para.E_true = E_true;
 
 
-r_guess = r;
+r_guess = r+1;
 % r
 % r_guess
 tic
-result = multi_mat_als(all_rho, true_para, r_guess);
+result = multi_mat_als(all_rho, r_guess, true_para);
+toc
+
+%%
+
+tic
+result = multi_mat_als(all_rho, r_guess);
 toc
 %% unique decomposition of K into V
 E_est = result.E_est;
