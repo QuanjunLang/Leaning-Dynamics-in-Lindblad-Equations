@@ -17,7 +17,11 @@ p = sysInfo.p;
 tgrid = sysInfo.tgrid;
 M = sysInfo.M;
 L = sysInfo.L;
-
+if isfield('obs_std', sysInfo)
+    obs_std = sysInfo.obs_std;
+else
+    obs_std = 0;
+end
 
 %%
 a = pyrunfile("Lindblad.py", 'a', n = n, p = p, tgrid = tgrid, M = M);
@@ -61,7 +65,7 @@ for m = 1:M
 end
 
 trueInfo.all_rho_true = all_rho;
-all_rho = all_rho + (randn(size(all_rho)) + 1i*randn(size(all_rho)))*sysInfo.obs_std*abs(mean(all_rho, 'all'));
+all_rho = all_rho + (randn(size(all_rho)) + 1i*randn(size(all_rho)))*obs_std*abs(mean(all_rho, 'all'));
 
 
 %% plot sample trajectories

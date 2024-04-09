@@ -2,6 +2,7 @@ clc
 close all
 clear all
 rng(1)
+addPaths
 % pyenv(Version='/opt/anaconda3/envs/py3.11/bin/python')
 
 
