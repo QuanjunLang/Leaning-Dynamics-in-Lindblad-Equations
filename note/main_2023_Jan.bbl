@@ -1,0 +1,120 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{anyt/global//global/global}
+  \entry{vanloanApproximationKroneckerProducts1993}{incollection}{}
+    \name{author}{2}{}{%
+      {{hash=VLCF}{%
+         family={Van\bibnamedelima Loan},
+         familyi={V\bibinitperiod\bibinitdelim L\bibinitperiod},
+         given={C.\bibnamedelima F.},
+         giveni={C\bibinitperiod\bibinitdelim F\bibinitperiod},
+      }}%
+      {{hash=PN}{%
+         family={Pitsianis},
+         familyi={P\bibinitperiod},
+         given={N.},
+         giveni={N\bibinitperiod},
+      }}%
+    }
+    \name{editor}{3}{}{%
+      {{hash=MMS}{%
+         family={Moonen},
+         familyi={M\bibinitperiod},
+         given={Marc\bibnamedelima S.},
+         giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+      {{hash=GGH}{%
+         family={Golub},
+         familyi={G\bibinitperiod},
+         given={Gene\bibnamedelima H.},
+         giveni={G\bibinitperiod\bibinitdelim H\bibinitperiod},
+      }}%
+      {{hash=DMBLR}{%
+         family={De\bibnamedelima Moor},
+         familyi={D\bibinitperiod\bibinitdelim M\bibinitperiod},
+         given={Bart L.\bibnamedelima R.},
+         giveni={B\bibinitperiod\bibinitdelim L\bibinitperiod\bibinitdelim
+  R\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer Netherlands}%
+    }
+    \keyw{block matrices,Kronecker product,preconditioned}
+    \strng{namehash}{VLCFPN1}
+    \strng{fullhash}{VLCFPN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{VLP93}
+    \field{sortinit}{V}
+    \field{sortinithash}{V}
+    \field{abstract}{%
+    Let A be an m-by-n matrix with m = m1m2 and n = n1n2. We consider the
+  problem of finding \% MathType!MTEF!2!1!+-\%
+  feaaguart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLn\%
+  hiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr\%
+  4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq-Jc9\%
+  vqaqpepm0xbba9pwe9Q8fs0-yqaqpepae9pg0FirpepeKkFr0xfr-x\%
+  fr-xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamOqaiabgI\%
+  Giolabl2riHoaaCaaaleqabaGaamyBamaaBaaameaacaaIXaaabeaa\%
+  liabgEna0kaad6gadaWgaaadbaGaaGymaaqabaaaaOGaaGjbVlaadg\%
+  gacaWGUbGaamizaiaaysW7caWGdbGaaGjbVlabgIGiolaaysW7cqWI\%
+  DesOdaahaaWcbeqaaiaad2gadaWgaaadbaGaaGOmaaqabaWccqGHxd\%
+  aTcaWGUbWaaSbaaWqaaiaaikdaaeqaaaaakiaaysW7caWGZbGaam4B\%
+  aiaaysW7caWG0bGaamiAaiaadggacaWG0bGaaGjbVlaacYhacaGG8b\%
+  GaaGjbVlaadgeacqGHsislcaWGcbGaey4LIqSaam4qaiaaysW7caGG\%
+  8bGaaiiFaiaaysW7daWgaaWcbaGaamOraaqabaaaaa!6BBE!\$\$B \textbackslash in
+  \{\textbackslash mathbb\{R\}\^{}\{\{m\_1\} \textbackslash times
+  \{n\_1\}\}\}\textbackslash;and\textbackslash;C\textbackslash; \textbackslash
+  in \textbackslash;\{\textbackslash mathbb\{R\}\^{}\{\{m\_2\} \textbackslash
+  times
+  \{n\_2\}\}\}\textbackslash;so\textbackslash;that\textbackslash;||\textbackslash;A
+  - B \textbackslash otimes C\textbackslash;||\{\textbackslash;\_F\}\$\$is
+  minimized. This problem can be solved by computing the largest singular value
+  and associated singular vectors of a permuted version of A. If A is
+  symmetric, definite, non-negative, or banded, then the minimizing B and C are
+  similarly structured. The idea of using Kronecker product preconditioned is
+  briefly discussed.%
+    }
+    \field{booktitle}{Linear {{Algebra}} for {{Large Scale}} and {{Real-Time
+  Applications}}}
+    \verb{doi}
+    \verb 10.1007/978-94-015-8196-7_17
+    \endverb
+    \field{isbn}{978-94-015-8196-7}
+    \field{pages}{293\bibrangedash 314}
+    \field{title}{Approximation with {{Kronecker Products}}}
+    \verb{url}
+    \verb https://doi.org/10.1007/978-94-015-8196-7_17
+    \endverb
+    \field{langid}{english}
+    \list{location}{1}{%
+      {Dordrecht}%
+    }
+    \verb{file}
+    \verb /Users/langquanjun/Zotero/storage/AJVEDPM3/Van Loan and Pitsianis - 1
+    \verb 993 - Approximation with Kronecker Products.pdf
+    \endverb
+    \field{year}{1993}
+    \field{urlday}{20}
+    \field{urlmonth}{03}
+    \field{urlyear}{2024}
+  \endentry
+\enddatalist
+\endinput
