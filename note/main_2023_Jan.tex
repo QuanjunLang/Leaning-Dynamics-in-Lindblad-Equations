@@ -187,6 +187,31 @@ isbn=false,
 \newcommand{\jl}[1]{\textcolor{red}{[\textsf{JL: #1]}}}
 \newcommand{\bl}[1]{{\color{magenta} [\textbf{BL}: #1]}}
 
+% for bwl
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\maf}[1]{\mathfrak{#1}}
+\newcommand{\ms}[1]{\mathscr{#1}}
+\renewcommand{\R}{\mathbb{R}} 
+\renewcommand{\C}{\mathbb{C}} 
+\newcommand{\lad}{\lambda}
+\newcommand{\si}{\sigma}
+\newcommand{\vr}{\varrho}
+\newcommand{\rd}{\mathrm{d}}
+\newcommand{\magg}[1]{{\color{magenta} #1}}
+\def \ww {\omega}
+\def \d {\delta}
+\def \h {\hat} 
+\def \ep {\varepsilon}
+\def \w {\widetilde}
+\def \q {\quad}
+\def \id {{\rm id}}
+\def  \mi {{\bf 1}}
+\def \bh {\mc{B}(\mc{H})}
+\def \l {\langle}
+\def \r {\rangle}
+\def \si {\sigma}
+\def \dd {\cdot}
+\def \pa {\partial}
 
 
 \title{Efficient estimation of Lindbladians from trajectory data}
@@ -238,11 +263,14 @@ where $A = \sum_i a_i \ketbra{a_i}{a_i}$. When observe using $A$, we obtain stat
 	\frac{d}{dt} \expval{A}(t) = -i\expval{[A, H]}(t) + \sum_{k = 1}^r \left(\expval{C_k^\dagger A C_k}(t) - \frac{1}{2} \expval{A C_k^\dagger C_k} (t) - \frac{1}{2} \expval{C_k^\dagger C_k A}(t) \right)
 \end{equation}
 
-
-
 Due to the expense of evaluating the states, the derivative term in \eqref{eq_QME_main} is unrealistic to obtain. Since the finite difference 
 $$ \frac{\expval{A}(t + \Delta t) - \expval{A}(t)}{\Delta t} $$ 
 will amplify the error in $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$. The error in the derivative is of order $\Delta t^2 + \frac{\delta}{\Delta t}$, where the first $\Delta t^2 $ is the error in finite difference using midpoint method, and the $\delta$ is the accuracy in the expectation. In order to achieve $\varepsilon$ accuracy in the derivative, we need $\Delta t \leq \sqrt{\varepsilon}$ and both $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$ to have $\delta = \varepsilon^{3/2}$ accuracy, therefore requires $1/\varepsilon^{3/2}$ number of independent trails in evaluating the expectation.
+
+\subsection*{Notation and outline}
+We fix the notation used throughout this work. Let $\mc{H}\simeq \C^N$ be a finite-dimensional Hilbert space with $N = 2^n$ and $\mc{B}(\mc{H})$ be the space of bounded operators. We denote by $\mc{B}_{sa}(\mc{H})$ the subspace of self-adjoint operators and by $\mc{B}^{+}_{sa}(\mc{H})$ the cone of positive semidefinite operators. For simplicity, we write $A \ge 0$ (resp., $A > 0$) for a positive semidefinite (resp., definite) operator. We then denote by $\mc{D}(\mc{H}) := \{\rho \in \mc{B}_{sa}^+(\mc{H})\,;\  \tr \rho =1 \}$ the set of density operators (quantum states), and by $\mc{D}_+(\mc{H})$ the full-rank density operators. Moreover, let $X^*$ be the adjoint operator of $X$ and $\l X, Y\r = \tr (X^*Y)$ be the Hilbert-Schmidt inner product on $\bh$. 
+The adjoint of a superoperator $\Phi: \mc{B}(\mc{H}) \to \mc{B}(\mc{H})$ with respect to the inner product $\l \dd,\dd \r $ is denoted by $\Phi^\dag$. 
+
 
 \section{Preliminary}
 
