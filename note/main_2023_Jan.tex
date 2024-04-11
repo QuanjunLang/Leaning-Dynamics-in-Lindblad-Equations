@@ -185,11 +185,11 @@ isbn=false,
 %%%%%%%%%%%%%% comments %%%%%%%%%%%%%%%
 \newcommand{\QL}[1]{\textcolor{cyan}{{#1}}}
 \newcommand{\jl}[1]{\textcolor{red}{[\textsf{JL: #1]}}}
+\newcommand{\bl}[1]{{\color{magenta} [\textbf{BL}: #1]}}
 
 
 
-
-\title{Learning memory kernels in Generalized Langevin Equations}
+\title{Efficient estimation of Lindbladians from trajectory data}
 \author{Quanjun Lang, Bowen Li, Jianfeng Lu}
 \date{}
 
@@ -199,6 +199,7 @@ isbn=false,
 
 \tableofcontents
 \section{Introduction}
+
 We study the problem of learning in open quantum systems. The goal is to learn the dynamics in the Lindblad quantum master equation (QME)
 \begin{equation}\label{eq_QME_main}
 	\frac{d}{dt} \rho = -i[H, \rho] + \sum_{k = 1}^r (C_k \rho C_k^\dagger - \frac{1}{2} C_k^\dagger C_k \rho - \frac{1}{2} C_k^\dagger C_k \rho)
@@ -226,8 +227,10 @@ Then the map $\mV(t) = e^{\mL t}$ is a complete positive trace-preserving map fo
 \end{equation}
 where $\sum_{k}C_kC_k^\dagger = I_\mH$. 
 
-%Note that $\rho \in \mB(\R^n)$ and $\mV \in \mB(\mB(\R^n))$ has dimension $n^4$. In practice, we often assume that the chan
-\subsection{Difficulty}
+\subsection*{Related works} 
+\bl{Literature review for Lindbladian learning/Prony method for system eigenvalues/Matrix completion}
+
+\subsection*{Difficulty and contribution} 
 Firstly, the evaluation of the density requires taking the expectation with respect to an observable, namely
 $$ \innerp{A, \rho}_F = \tr(A \rho) = \expval{A}$$
 where $A = \sum_i a_i \ketbra{a_i}{a_i}$. When observe using $A$, we obtain state $\ket{a_i}$ with probability $a_i$. In practice, we take the empirical distribution of the observed states as the estimated value of $\tr(A, \rho)$. Therefore, the accuracy suffers from the law of large numbers with order $1/\sqrt{N}$, where $N$ is the number of independent trials. With given observable $A$, the original equation \eqref{eq_QME_main} can be written as 
@@ -240,6 +243,26 @@ where $A = \sum_i a_i \ketbra{a_i}{a_i}$. When observe using $A$, we obtain stat
 Due to the expense of evaluating the states, the derivative term in \eqref{eq_QME_main} is unrealistic to obtain. Since the finite difference 
 $$ \frac{\expval{A}(t + \Delta t) - \expval{A}(t)}{\Delta t} $$ 
 will amplify the error in $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$. The error in the derivative is of order $\Delta t^2 + \frac{\delta}{\Delta t}$, where the first $\Delta t^2 $ is the error in finite difference using midpoint method, and the $\delta$ is the accuracy in the expectation. In order to achieve $\varepsilon$ accuracy in the derivative, we need $\Delta t \leq \sqrt{\varepsilon}$ and both $\expval{A}(t)$ and $\expval{A}(t + \Delta t)$ to have $\delta = \varepsilon^{3/2}$ accuracy, therefore requires $1/\varepsilon^{3/2}$ number of independent trails in evaluating the expectation.
+
+\section{Preliminary}
+
+\subsection{Quantum Markovian dynamics}
+
+\subsection{Observable and measurements}
+
+\section{A framework of learning Lindbladian}
+\bl{We use Prony method to estimate the spectrum of the system and the derivative of the trajectory. We then use the alternating least squares to reconstruct the Lindbladian by exploiting its low-rank structure.
+}
+
+\subsection{Prony fitting of the trajectory}
+To increase the accuracy of the estimation of the derivatives, we use the Prony method to fit the trajectories $\expval{A}$. Since the solution can be written as $\rho(t) = e^{t\bL } \rho(0)$, and $\bL$ contains the jump operators, it converges to a steady state exponentially. In the case the $\bL$ is diagonalizable, $\bL = U \Sigma U^{-1}$, where $\Sigma = \diag\{\lambda_1, \dots, \lambda_{n^2}\}$(possibly repeated). Then 
+\begin{equation}
+	\rho(t) = Ue^{t\Sigma}U^{-1}\rho(0)
+\end{equation}
+\subsection{Alternating least squares}
+
+
+
 
 \subsection{Vectorization and reshaping}
 \subsubsection{Vectorization}
@@ -352,9 +375,16 @@ It is natural to define the loss function as
 \end{equation}
 
 
+\section{Theoretical analysis}
 
+\subsection{Spectrum and derivative estimation}
 
-\subsection{Matrix sensing}
+\bl{We analyse the spectrum/derivative estimation error in terms of measurement number/sample complexity and total Lindbladian simulation time}
+
+\subsection{Lindbladian estimation}
+
+\bl{We analysis the scaling of the Lindbladian reconstruction error in the derivative estimation error}
+
 \subsubsection{Problem settings}
 Suppose we observe data from 
 \begin{equation}
@@ -430,100 +460,12 @@ The linear operator $\mA$ is constructed by taking the $i$-th measurement as $S_
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Quantum Channel tomograph}
-
-
-
-
-
-
-
-
-\section{Proposed method}
-We first use the trajectories using the Prony method, then take explicit derivatives and use alternating least squares to minimize the loss. 
-\subsection{Prony fitting of the trajectory}
-To increase the accuracy of the estimation of the derivatives, we use the Prony method to fit the trajectories $\expval{A}$. Since the solution can be written as $\rho(t) = e^{t\bL } \rho(0)$, and $\bL$ contains the jump operators, it converges to a steady state exponentially. In the case the $\bL$ is diagonalizable, $\bL = U \Sigma U^{-1}$, where $\Sigma = \diag\{\lambda_1, \dots, \lambda_{n^2}\}$(possibly repeated). Then 
-\begin{equation}
-	\rho(t) = Ue^{t\Sigma}U^{-1}\rho(0)
-\end{equation}
-\subsection{Alternating least squares}
-
-
-
-\section{Literature review}
-
-\subsection{Quantum Chanel tomography}
-\subsection{Lindbladian learning}
-\subsection{Prony method for system eigenvalues}
-\subsection{Matrix completion}
-
-
-\section{Numerical Details}
+\section{Numerical experiments}
 
 Given a discrete time mesh $t_n = n \Delta t$, generate data $\rho(t_n)$ using the Python package mesolve. Try to learn the quantum channels of $e^{t_n\bL}$ using the ALS code, and then compare the eigenvalues of each result.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \printbibliography
-
 
 \end{document}
