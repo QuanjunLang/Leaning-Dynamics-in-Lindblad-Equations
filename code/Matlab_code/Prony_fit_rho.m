@@ -6,7 +6,7 @@ function prony_result = Prony_fit_rho(all_rho_obs, obsInfo)
 dt              = obsInfo.dt;
 obs_len         = obsInfo.obs_len;
 prony_p         = obs_len/2;
-prony_p         = 5;
+% prony_p         = 5;
 %% prony fitting of the density trajectories
 prony_result = cell(n, n, M);
 

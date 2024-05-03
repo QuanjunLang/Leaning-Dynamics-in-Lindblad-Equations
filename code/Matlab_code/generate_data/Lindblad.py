@@ -3,7 +3,7 @@ import numpy as np
 from qutip import Qobj, mesolve, sigmax, Options
 import qutip
 
-np.random.seed(0)
+# np.random.seed(0)
 
 # np.random.seed(1)
 # %%
@@ -40,6 +40,8 @@ def test():
         # C.append(0.2*qutip.rand_dm(N, density=0.75))
 
         temp = np.random.normal(0, 1, size=(N, N)) + 1j*np.random.normal(0, 1, size=(N, N))
+        #
+        temp[0, 0] = temp[0, 0] - np.trace(temp) 
         C.append(qutip.Qobj(0.05*temp))
 
         # C.append(0.2*qutip.destroy(N))

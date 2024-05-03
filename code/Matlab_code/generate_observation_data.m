@@ -15,6 +15,6 @@ obsInfo.tgrid   = 0:obsInfo.dt:obsInfo.T;
 obsInfo.obs_ind = (0:obs_len)*obs_gap+1;
 %%
 all_rho_obs = all_rho(:, :, obsInfo.obs_ind, :);
-all_rho_obs = all_rho_obs + randn(size(all_rho_obs))*obs_std;
-
+% all_rho_obs = all_rho_obs + max(abs(all_rho_obs), [], 'all')*randn(size(all_rho_obs))*obs_std;
+all_rho_obs = all_rho_obs + mean(abs(all_rho_obs), 'all')*randn(size(all_rho_obs))*obs_std;
 end

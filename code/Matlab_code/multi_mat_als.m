@@ -18,20 +18,20 @@ plotON             = p.Results.plotON;
 
 
 
-
+loss_threshold = 1e-10;
 
 
 [n, ~, T_temp, M] = size(all_rho);
 T = T_temp - 1;
 
 % r = 5;
-niter = 500;
+niter_pre = 2;
 
-all_A = zeros(n, n, r, niter);      % All steps for A
-all_B = zeros(n, n, r, niter);      % All steps for B
-all_V = zeros(n, n, r, niter);      % All steps for V, V is a formal average of A and B', because that is what they are
-all_L = zeros(n^2, n^2, niter);     % All steps for L
-all_E = zeros(n^2, n^2, niter);
+all_A = zeros(n, n, r, niter_pre);      % All steps for A
+all_B = zeros(n, n, r, niter_pre);      % All steps for B
+all_V = zeros(n, n, r, niter_pre);      % All steps for V, V is a formal average of A and B', because that is what they are
+all_L = zeros(n^2, n^2, niter_pre);     % All steps for L
+all_E = zeros(n^2, n^2, niter_pre);
 
 % all_A = cell(niter, 1);
 % all_B = cell(niter, 1);
@@ -39,8 +39,8 @@ all_E = zeros(n^2, n^2, niter);
 
 
 
-loss  = zeros(niter, 1);
-all_rk = zeros(niter, 1);
+loss  = zeros(niter_pre, 1);
+all_rk = zeros(niter_pre, 1);
 
 
 A_0 = randn(n, n, r) + 1i*randn(n, n, r);
@@ -54,19 +54,20 @@ if isa(true_para, 'struct')              % If true para information is provided
     L_true = true_para.L_true;
     E_true = true_para.E_true;
 
-    err_A = zeros(niter, 1);        % store the errors
-    err_B = zeros(niter, 1);
-    err_V = zeros(niter, 1);
-    err_L = zeros(niter, 1);
-    err_E = zeros(niter, 1);
+    err_A = zeros(niter_pre, 1);        % store the errors
+    err_B = zeros(niter_pre, 1);
+    err_V = zeros(niter_pre, 1);
+    err_L = zeros(niter_pre, 1);
+    err_E = zeros(niter_pre, 1);
 
 end
 
 
 
-
+niter = 500;
 % A_0 = A_true; % sanity check of starting from truth
 for i = 1:niter
+    i
     % Estimate B first
     regmat_B_given_A = zeros(M*T*n^2, r*n^2);
     k = 1;
@@ -168,6 +169,13 @@ for i = 1:niter
         test_rho(:, :, t+1, :) = all_rho1;
     end
     loss(i) = norm(test_rho - all_rho, 'fro');
+
+    if i > 2
+        if abs(loss(i) - loss(i-1)) < loss_threshold
+            break
+        end
+    end
+            
 end
 
 

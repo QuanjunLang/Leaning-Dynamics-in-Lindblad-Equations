@@ -41,7 +41,7 @@ if plotON
     n = sysInfo_plot.n;
     tgrid = sysInfo_plot.tgrid;
 
-    [sysInfo_plot, all_rho, true_Info_plot] = generate_data(sysInfo_plot, 'plotON', 1);
+    [all_rho, true_Info_plot] = generate_data(sysInfo_plot, 'plotON', 1);
     rho = all_rho(:, :, :, 1);
 
     figure;
@@ -62,7 +62,7 @@ end
 
 
 %% Prony fitting test
-prony_fitting_test;
+% prony_fitting_test;
 
 % prony_result = Prony_fit_rho(all_rho, sysInfo)
 
@@ -72,7 +72,7 @@ prony_fitting_test;
 
 
 %% Learn the channel operators for different time difference
-[sysInfo, all_rho, trueInfo] = generate_data(sysInfo);
+[all_rho, trueInfo] = generate_data(sysInfo);
 
 all_rho_diff_time   = cell(sysInfo.steps, 1);
 result_channel      = cell(sysInfo.steps, 1);

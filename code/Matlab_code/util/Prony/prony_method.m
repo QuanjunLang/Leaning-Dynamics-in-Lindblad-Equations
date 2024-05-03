@@ -115,7 +115,8 @@ end
 
 switch weight_method
     case {'LS'}
-        w = Z\x ;
+        % w = Z\x ;
+        w = lsqminnorm(Z, x);
     case {'LS_freq'}
         D = diag((imag(lam_straight)).^2) + eye(p, p);
         A = Z'*Z;

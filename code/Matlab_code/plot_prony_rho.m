@@ -16,22 +16,24 @@ d_rho_prony = gradient(rho_prony, sysInfo.dt);
 
 
 figure;subplot(121);hold on;
-plot(tgrid, real(rho), 'LineWidth', 2);
+plot(tgrid, real(rho), 'LineWidth', 5);
 plot(tgrid, real(rho_prony), 'LineWidth', 2);
-plot(obs_tgrid, real(rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 2);
+plot(obs_tgrid, real(rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
 xline(obsInfo.T)
-plot(tgrid, imag(rho), 'LineWidth', 2);
+plot(tgrid, imag(rho), 'LineWidth', 5);
 plot(tgrid, imag(rho_prony), 'LineWidth', 2);
-plot(obs_tgrid, imag(rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 2);
+plot(obs_tgrid, imag(rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
+xlim([0, obsInfo.T*1.5])
 
 subplot(122);hold on;
-plot(tgrid, real(d_rho), 'LineWidth', 2);
+plot(tgrid, real(d_rho), 'LineWidth', 5);
 plot(tgrid, real(d_rho_prony), 'LineWidth', 2);
-plot(obs_tgrid, real(d_rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 2);
+plot(obs_tgrid, real(d_rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
 xline(obsInfo.T)
-plot(tgrid, imag(d_rho), 'LineWidth', 2);
+plot(tgrid, imag(d_rho), 'LineWidth', 5);
 plot(tgrid, imag(d_rho_prony), 'LineWidth', 2);
-plot(obs_tgrid, imag(d_rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 2);
+plot(obs_tgrid, imag(d_rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
+xlim([0, obsInfo.T*1.5])
 
 % subplot(133);hold on;
 % eigL = eig(true_Info_plot.L_true);
