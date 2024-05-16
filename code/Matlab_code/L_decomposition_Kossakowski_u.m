@@ -19,9 +19,15 @@ end
 H_part_vec = vec(get_H_part(H));
 b_u = (L_vec - H_part_vec);
 
+if ~exist('lambda', 'var')
+    lambda = 0;
+end
+
 
 % constraint = 1;
 % lambda = 1;
+
+
 if ~lambda
     % without positive definite constraint
     vec_u_est = A_u\b_u;

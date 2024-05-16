@@ -5,25 +5,21 @@ rng(1)
 addPaths
 
 %%
-sysInfo.n       = 3;            %
-sysInfo.M       = 1;           % number of independent trajectories
-sysInfo.dt      = 0.05;         % true data generation time grid
-sysInfo.p       = 2;            % number of jump operators
-
-
-sysInfo.steps   = 500;
+sysInfo.n       = 3;           % dimension of the quantum
+sysInfo.M       = 5;           % number of independent trajectories
+sysInfo.dt      = 0.05;        % true data generation time grid
+sysInfo.p       = 2;           % number of jump operators
+sysInfo.steps   = 500;         % time steps of true data
 sysInfo = update_sys(sysInfo);
 
-[all_rho, trueInfo] = generate_data(sysInfo);
 
+[all_rho, trueInfo] = generate_data(sysInfo);
 
 obsInfo.obs_std = 1e-4;
 obsInfo.obs_gap = 20;
 obsInfo.obs_len = 10;
 
-
 [all_rho_obs, obsInfo] = generate_observation_data(all_rho, sysInfo, obsInfo);
-
 
 %%
 L = trueInfo.L_true;
@@ -35,7 +31,6 @@ v_true = trueInfo.v_true;
 p = sysInfo.p;
 F = trueInfo.F;
 n = sysInfo.n;
-
 G = cell(n^2-1, n^2-1);
 
 for k = 1:n^2-1
@@ -44,22 +39,6 @@ for k = 1:n^2-1
         G{k, l} = sparse(G_kl);
     end
 end
-
-%% iterations
-clc
-result = L_decomposition_hamiltonian_kossakowski(L, p, trueInfo);
-
-
-
-
-
-
-
-
-
-
-
-%%
 
 
 K_part = zeros(size(H_part));
@@ -70,7 +49,10 @@ for k = 1:n^2 - 1
     end
 end
 
-norm(K_part + H_part - L);
+norm(K_part + H_part - L)
+
+%% Sanity check - Decomposition for true L
+result = L_decomposition_hamiltonian_kossakowski(L, p, trueInfo);
 
 %% test thte vectorized equivalence
 G_v = cell(n^2-1, p);

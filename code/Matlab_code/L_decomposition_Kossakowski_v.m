@@ -25,6 +25,10 @@ b_v = (L_vec - H_part_vec);
 A_v = conj(A_v);
 b_v = conj(b_v);
 
+if ~exist('lambda', 'var')
+    lambda = 0;
+end
+
 
 
 % constraint = 0;
