@@ -38,11 +38,11 @@ end
 toc
 
 %% DEBUG
-lambda = 1;
-tic;u_est = ALS_Kossakowski_u(all_rho_pair_data, v, H, G, p, lambda);toc
-tic;v_est = ALS_Kossakowski_v(all_rho_pair_data, u, H, G, p, lambda);toc
-tic;[H_est, c_est] = ALS_Kossakowski_H(all_rho_pair_data, u, v, G, F);toc
-K_est = u_est*v_est';
+% lambda = 1;
+% tic;u_est = ALS_Kossakowski_u(all_rho_pair_data, v, H, G, p, lambda);toc
+% tic;v_est = ALS_Kossakowski_v(all_rho_pair_data, u, H, G, p, lambda);toc
+% tic;[H_est, c_est] = ALS_Kossakowski_H(all_rho_pair_data, u, v, G, F);toc
+% K_est = u_est*v_est';
 
 
 
@@ -53,7 +53,7 @@ K_est = u_est*v_est';
 % norm(c - c_est)
 
 %% Iteration
-niter = 200;
+niter = 400;
 
 all_u = cell(niter, 1);
 all_v = cell(niter, 1);
@@ -119,13 +119,13 @@ end
 
 lnwd = 1.5;
 figure;hold on;
-plot(log10(u_err), '-o',  'DisplayName','u', 'LineWidth',lnwd);
-plot(log10(v_err), 'DisplayName','v', 'LineWidth',lnwd);
+% plot(log10(u_err), '-o',  'DisplayName','u', 'LineWidth',lnwd);
+% plot(log10(v_err), 'DisplayName','v', 'LineWidth',lnwd);
 plot(log10(K_err), 'DisplayName','K', 'LineWidth',lnwd+3);
 plot(log10(c_err), 'DisplayName','c', 'LineWidth',lnwd+3);
-plot(log10(H_err), 'DisplayName','H', 'LineWidth',lnwd);
-plot(log10(uv_df), 'DisplayName','u-v', 'LineWidth',lnwd);
-plot(log10(K_sym), 'DisplayName','K-K^t', 'LineWidth',lnwd);
+% plot(log10(H_err), 'DisplayName','H', 'LineWidth',lnwd);
+% plot(log10(uv_df), 'DisplayName','u-v', 'LineWidth',lnwd);
+% plot(log10(K_sym), 'DisplayName','K-K^t', 'LineWidth',lnwd);
 legend()
 
 result.u = all_u{end};

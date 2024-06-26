@@ -10,6 +10,7 @@ import qutip
 def test():
     # Some defaul settings
 
+    # s     = 0.01
     # H     = 2*np.pi * s * sigmax()
     # times = np.linspace(0.0, 1.0, 10)
     # rho0  = Qobj([[1,3],[3, 2]])
@@ -31,7 +32,8 @@ def test():
     times = np.array(tgrid)
 
     # Hermitian term
-    H = qutip.rand_herm(N, density=0.75, dims=None, pos_def=False)/5
+    # H = qutip.rand_herm(N, density=0.75, dims=None, pos_def=False)/5
+    H = qutip.rand_herm(N, density=0.75)/5
     
     # Lindbladian term
     C = []

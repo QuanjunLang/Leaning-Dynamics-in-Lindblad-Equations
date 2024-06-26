@@ -2,11 +2,16 @@ clc
 close all
 clear all
 rng(2)
-pyenv(Version='/opt/anaconda3/envs/py3.11/bin/python');
+% pyenv(Version='/opt/anaconda3/envs/py3.11/bin/python');
+% pyenv(Version='/opt/anaconda3/bin/python');
+% pyenv('Version', '');
+pyenv(Version='/usr/bin/python3');
+% pyenv('ExecutionMode', 'OutOfProcess');
+
 addPaths
 
 %% system settings
-sysInfo.n       = 4;            % 
+sysInfo.n       = 8;            % 
 sysInfo.M       = 8;            % number of independent trajectories
 sysInfo.dt      = 0.005;        % true data generation time grid
 sysInfo.p       = 3;            % number of jump operators
@@ -21,7 +26,7 @@ sysInfo = update_sys(sysInfo);
 L_decomp_true = L_decomposition_hamiltonian_kossakowski(trueInfo.L_true, sysInfo.p, trueInfo);
 %% generate observational data
 
-obsInfo.obs_std = 0;
+obsInfo.obs_std = 1e-5;
 obsInfo.obs_gap = 100;
 obsInfo.obs_len = 10;
 
@@ -83,43 +88,44 @@ for t = 1:obsInfo.obs_len
     end
 end
 
-% %% DEBUG
-% figure;hold on;
-% plot(abs(all_rho_prony{i, j, m}.dh(obsInfo.tgrid)))
-% obs_drho = squeeze((all_rho_obs(i, j, 2:end, m) - all_rho_obs(i, j, 1:end-1, m))/obsInfo.dt);
-% plot(abs(obs_drho), '-o');
-% % plot(obs_drho);
+% Prony fit data time 0
+all_rho_prony_pair_data_aug = zeros(n, n, 2, M*(sysInfo.steps+1));
+
+t = 1;
+for i = 1:n
+    for j = 1:n
+        for m = 1:M
+            all_rho_prony_pair_t0(i, j, 1, (t-1)*M+m) = all_rho_prony{i, j, m}.h(sysInfo.tgrid(t));
+            all_rho_prony_pair_t0(i, j, 2, (t-1)*M+m) = all_rho_prony{i, j, m}.dh(sysInfo.tgrid(t));
+        end
+    end
+end
 
 
-%% Two stage, get L using Prony fitted data
-tic
+%% Two stage
+% get L using Prony fitted data
 result_prony = multi_mat_als(all_rho_prony_pair_data, trueInfo.r_true, 'true_para', trueInfo, 'rank_threshold', 1e-5, 'plotON', 0);
-L_time = toc;
-% result_prony_aug = multi_mat_als(all_rho_prony_pair_data_aug, trueInfo.r_true, 'true_para', trueInfo, 'rank_threshold', 1e-5, 'plotON', 0);
 
-%% Two stage, get L using finite difference derivative
+% get L using finite difference derivative
 result_obs = multi_mat_als(all_rho_obs_pair_data, trueInfo.r_true, 'true_para', trueInfo, 'rank_threshold', 1e-5, 'plotON', 0);
+
+% get L using time 0 only
+result_t0 = multi_mat_als(all_rho_prony_pair_t0, trueInfo.r_true, 'true_para', trueInfo, 'rank_threshold', 1e-5, 'plotON', 0);
+
+
 %%
 figure;
 
-% subplot(121);
 hold on; grid on
 plot(log10(result_prony.loss), 'DisplayName','Loss Prony');
 plot(log10(result_prony.err_E), ':', 'linewidth', 3, 'DisplayName','E Prony');
-% title('Prony fit derivatives')
 
-% subplot(122);hold on; grid on
 plot(log10(result_obs.loss), 'DisplayName','Loss obs');
 plot(log10(result_obs.err_E), ':', 'linewidth', 3, 'DisplayName','E obs');
-% ttl = ['obs derivatives'];
-% title(ttl)
 
+plot(log10(result_t0.loss), 'DisplayName','Loss t0');
+plot(log10(result_t0.err_E), ':', 'linewidth', 3, 'DisplayName','E t0');
 legend()
-% subplot(133);hold on; grid on
-% plot(log10(result_prony_aug.loss), 'DisplayName','Loss');
-% plot(log10(result_prony_aug.err_E), ':', 'linewidth', 3, 'DisplayName','E');
-% ttl = ['prony augmented derivatives'];
-% title(ttl)
 
 
 
@@ -134,128 +140,4 @@ result = L_decomposition_hamiltonian_kossakowski(result_obs.L_est, sysInfo.p, tr
 
 
 %% (One stage) ALS Hamiltonian and Kossakowski 
-tic
 result = ALS_hamiltonian_kossakowski(all_rho_prony_pair_data, sysInfo, trueInfo);
-One_step_time = toc;
-
-% 
-% 
-% 
-% %% Decomposition of Liouvillian into Hamiltonian and Jump
-% E = trueInfo.E_true;
-% L = trueInfo.L_true;
-% phi = trueInfo.phi_true;
-% kappa = trueInfo.kappa_true;
-% kappa_part = trueInfo.kappa_part_true;
-% 
-% K = rearrangement_R(kappa_part);
-% P = rearrangement_R(phi);
-% 
-% norm(P - K - E)
-% 
-% %% 
-% H = trueInfo.H_true;
-% H_part = trueInfo.H_part_true;
-% jump_part = trueInfo.jump_part_true;
-% 
-% 
-% F = cell(n^2-1, 1);
-% for l = 1:n-1
-%     temp = zeros(n, 1);
-%     temp(1:l) = 1;
-%     temp(l+1) = -l;
-%     F{l} = 1i/sqrt(l*(l+1))*(diag(temp));
-% end
-% l = l+1;
-% for k = 1:n
-%     for j = 1:k-1
-%         e_jk = zeros(n, n);
-%         e_jk(j, k) = 1;
-% 
-%         F{l} = (e_jk + e_jk')/sqrt(2);l = l+1;
-%         F{l} = -1i*(e_jk - e_jk')/sqrt(2);l = l+1;
-% 
-%     end
-% end
-% 
-% 
-% 
-% 
-% E = zeros(n^2- 1, n^2-1);
-% for i = 1:n^2-1
-%     for j = 1:n^2-1
-%         E(i, j) = trace(F{i}*F{j}');
-%     end
-% end
-% 
-% 
-% 
-% 
-% G = zeros(n^2, n^2, n^2-1, n^2-1);
-% 
-% for i = 1:n^2-1
-%     for j = 1:n^2-1
-%         G(:, :, i, j) = kron(conj(F{i}), F{j}) - 0.5*kron((F{i}'*F{j}).', eye(n)) - 0.5*kron(eye(n), F{i}'*F{j});
-%     end
-% end
-% 
-% % AA = reshape(G, [n^2, n^2, (n^2-1)^2]);
-% A = zeros(n^4, (n^2-1)^2);
-% b = zeros(n^4, 1);
-% 
-% k = 1;
-% for i = 1:n^2
-%     for j = 1:n^2
-%         A(k, :) = reshape(G(i, j, :, :), [], 1);
-%         b(k) = jump_part(i, j);
-%         k = k + 1;
-%     end
-% end
-% 
-% c = A\b;
-% norm(A*c - b)
-% C = reshape(c, [n^2-1, n^2-1]);
-% 
-% C = (C + C')/2;
-% % C is the Kossakoski matrix 
-% %%
-% [U, S] = svd(C);
-% U = U';
-% u = U(1, :)*sqrt(S(1, 1));
-% 
-% C_true = trueInfo.C_true{1};
-% C_est = zeros(size(C_true));
-% 
-% for i = 1:n^2 - 1
-%     C_est = C_est + u(i)*F{i};
-% end
-% 
-% % C_est
-% % C_true
-% 
-% r = mean(C_true./C_est, 'all');
-% abs(C_true./C_est)
-% 
-% % C_est_v = zeros(size(C_true));
-% % v = u*r;
-% % for i = 1:n^2 - 1
-% %     C_est_v = C_est_v + v(i)*F{i};
-% % end
-% % C_true./C_est_v
-% 
-% %%
-% [U, S] = svd(C);
-% % U = U';
-% u = U*sqrt(S);
-% v = zeros(size(u));
-% 
-% C_true = trueInfo.C_true;
-% for q = 1:length(C_true)
-%     for i = 1:n^2 - 1
-%         v(i, q) = trace(C_true{q}'*F{i});
-%     end
-% end
-% 
-% 
-% 
-% 
