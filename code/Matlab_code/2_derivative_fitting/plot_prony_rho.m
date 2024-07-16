@@ -1,7 +1,6 @@
 function plot_prony_rho(all_rho_prony, all_rho, all_rho_obs, sysInfo, obsInfo, ind_1, ind_2, m)
 %% Plot an example of prony fitting result
 
-
 tgrid       = sysInfo.tgrid;
 rho         = squeeze(all_rho(ind_1, ind_2, :, m));
 d_rho       = gradient(rho, sysInfo.dt);

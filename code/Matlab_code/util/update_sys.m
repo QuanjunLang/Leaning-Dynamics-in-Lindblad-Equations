@@ -5,11 +5,13 @@ sysInfo.L       = sysInfo.steps+1;
 sysInfo.T       = sysInfo.steps*sysInfo.dt;
 sysInfo.tgrid   = 0:sysInfo.dt:sysInfo.steps*sysInfo.dt;
 
-
-if isfield('obs_std', sysInfo)
-    obs_std = sysInfo.obs_std;
+sysInfo.FULL_STATE = 1;
+if isfield(sysInfo, 'N_o')
+    if sysInfo.N_o < sysInfo.n^2
+        sysInfo.FULL_STATE = 0;
+    end
 else
-    obs_std = 0;
+    sysInfo.N_o = sysInfo.n^2;
 end
 
 

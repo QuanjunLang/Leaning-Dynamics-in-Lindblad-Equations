@@ -3,48 +3,30 @@ close all
 clear all
 rng(0)
 
-
-
 addPaths
-
-%%
-color1 = [     0    0.4470    0.7410];
-color2 = [0.8500    0.3250    0.0980];
-color3 = [0.9290    0.6940    0.1250];
-color4 = [0.4940    0.1840    0.5560];
-
-
-
 %% TODO
-% 1. derivative error
-%   other method of fitting trajectories
-%   number of observables
-% 2. number of observations
-%   
-
+% Observable O and rho expectation equals to
+% sum(O.' .* rho, 'all')
+% which is the same as 
+% vec(O')'*vec(rho)
 
 %% system settings
-% loadON = 0;
-% if loadON && exist('n_4.mat', 'file')
-%     load('n_4.mat');
-% else
-% pe = pyenv(Version='/usr/bin/python3', ExecutionMode = 'OutOfProcess');
 pe = pyenv(Version='/opt/anaconda3/bin/python', ExecutionMode = 'OutOfProcess');
 terminate(pe)
-sysInfo.n       = 6;            %
-sysInfo.M       = 8;            % number of independent trajectories
-sysInfo.dt      = 0.0001;        % true data generation time grid
-sysInfo.p       = 3;            % number of jump operators
 
-sysInfo.steps   = 10000;
+sysInfo.n       = 6;            % dimension of rho
+sysInfo.M       = 50;            % number of independent trajectories
+sysInfo.dt      = 0.0001;       % true data generation time grid
+sysInfo.p       = 1;            % number of jump operators
+sysInfo.N_o     = 8;            % number of obserables
+                                % set to n^2 indecate a full state observation                             
+sysInfo.steps   = 10000;        % total number of time steps
 sysInfo = update_sys(sysInfo);
-tic
-[all_rho, trueInfo] = generate_data(sysInfo);
-sysInfo.time = toc;
-% end
+
+[all_rho, trueInfo, observableInfo] = generate_data(sysInfo);
 
 %% decomposition of the true L into H and K
-L_decomp_true = L_decomposition_hamiltonian_kossakowski(trueInfo.L_true, sysInfo.p, trueInfo);
+% L_decomp_true = L_decomposition_hamiltonian_kossakowski(trueInfo.L_true, sysInfo.p, trueInfo);
 
 
 %% generate observational data
@@ -52,34 +34,36 @@ obsInfo.obs_std = 0;
 obsInfo.obs_gap = 1000;
 obsInfo.obs_len = 10;
 
-
+assert(obsInfo.obs_len*obsInfo.obs_gap <= sysInfo.steps, 'observation setting wrong')
 [all_rho_obs, obsInfo] = generate_observation_data(all_rho, sysInfo, obsInfo);
+
 
 %% Prony fitting test
 all_rho_prony = Prony_fit_rho(all_rho_obs, obsInfo);
+plot_prony_rho_one_sample(sysInfo, obsInfo, all_rho_prony, all_rho, all_rho_obs)
 
-ind_1 = 4;
-ind_2 = 2;
-m = 1;
 
-plot_prony_rho(all_rho_prony, all_rho, all_rho_obs, sysInfo, obsInfo, ind_1, ind_2, m)
-% plot_all_prony_modes(all_rho_prony, sysInfo, trueInfo)
-%% Learn the channel operators using observed derivatives and prony-fitted derivatives
+%% Construct input data for ALS with observables
+[all_expect_derivative_0, derivative_err] = get_all_data_pair_observable(all_rho, obsInfo, sysInfo, all_rho_obs, all_rho_prony);
 
-[all_rho_pair, derivative_err] = get_all_data_pair(all_rho, obsInfo, sysInfo, all_rho_obs, all_rho_prony);
+
+%% Two stage with observables
+
+% result = multi_mat_als_observable(all_expect_derivative_0.best, observableInfo, trueInfo.r_true, 'trueInfo', trueInfo);
+
+
+
 
 %% Two stage
+% get L using best data
+result_best = multi_mat_als_observable(all_expect_derivative_0.best, observableInfo, trueInfo.r_true, 'trueInfo', trueInfo, 'plotON', 0);
+
 % get L using Prony fitted data
-result_prony = multi_mat_als(all_rho_pair.prony, trueInfo.r_true, 'true_para', trueInfo, 'plotON', 0);
+result_prony = multi_mat_als_observable(all_expect_derivative_0.prony, observableInfo, trueInfo.r_true, 'trueInfo', trueInfo, 'plotON', 0);
 
 % get L using finite difference derivative
-result_obs = multi_mat_als(all_rho_pair.obs, trueInfo.r_true, 'true_para', trueInfo, 'plotON', 0);
+result_obs = multi_mat_als_observable(all_expect_derivative_0.obs, observableInfo, trueInfo.r_true, 'trueInfo', trueInfo, 'plotON', 0);
 
-% get L using time 0 only
-result_t0 = multi_mat_als(all_rho_pair.prony_t0, trueInfo.r_true, 'true_para', trueInfo, 'plotON', 0);
-
-% get L using best data
-result_best = multi_mat_als(all_rho_pair.best, trueInfo.r_true, 'true_para', trueInfo, 'plotON', 0);
 
 
 %%
@@ -92,8 +76,8 @@ plot(log10(result_prony.err_E), ':', 'linewidth', 3, 'DisplayName','E Prony', 'c
 plot(log10(result_obs.loss), 'DisplayName','Loss obs', 'color', color2);
 plot(log10(result_obs.err_E), ':', 'linewidth', 3, 'DisplayName','E obs', 'color', color2);
 
-plot(log10(result_t0.loss), 'DisplayName','Loss t0', 'color', color3);
-plot(log10(result_t0.err_E), ':', 'linewidth', 3, 'DisplayName','E t0', 'color', color3);
+% plot(log10(result_t0.loss), 'DisplayName','Loss t0', 'color', color3);
+% plot(log10(result_t0.err_E), ':', 'linewidth', 3, 'DisplayName','E t0', 'color', color3);
 
 plot(log10(result_best.loss), 'DisplayName','Loss best', 'color', color4);
 plot(log10(result_best.err_E), ':', 'linewidth', 3, 'DisplayName','E best', 'color', color4);

@@ -7,18 +7,16 @@ p = inputParser;
 addRequired(p, 'all_rho');
 addRequired(p, 'r');
 addOptional(p, 'true_para', 0); 
-addOptional(p, 'rank_threshold', 1e-6);
 addOptional(p, 'plotON', 0);
+addOptional(p, 'niter', 2000);
+addOptional(p, 'loss_threshold', 1e-10);
 
 parse(p,all_rho, r, varargin{:});
 
 true_para          = p.Results.true_para;
-rank_threshold     = p.Results.rank_threshold;
 plotON             = p.Results.plotON;
-
-
-
-loss_threshold = 1e-10;
+niter              = p.Results.niter;
+loss_threshold     = p.Results.loss_threshold;
 
 
 [n, ~, T_temp, M] = size(all_rho);
@@ -64,18 +62,19 @@ end
 
 
 
-niter = 500;
+
 % A_0 = A_true; % sanity check of starting from truth
 for i = 1:niter
-    i
+
     % Estimate B first
+    % tic
     regmat_B_given_A = zeros(M*T*n^2, r*n^2);
     k = 1;
     for m = 1:M
         for t = 1:T
             rho0 = all_rho(:, :, t, m);
             PP = superkron(eye(n, n), pagemtimes(A_0, rho0));
-            PPA = reshape(PP, [n^2. n^2*r]);
+            PPA = reshape(PP, [n^2, n^2*r]);
             regmat_B_given_A((k-1)*n^2+1:k*n^2, :) = PPA;
             k = k+1;
         end
@@ -84,6 +83,35 @@ for i = 1:niter
     vec_B_est = regmat_B_given_A \ bB;
     B_0 = reshape(vec_B_est, [n, n, r]);
     all_B(:, :, :, i) = B_0;
+    % t1 = toc;
+%% for loop with respect to rank r
+    % Estimate B first
+    % tic
+    % regmat_B_given_A0= zeros(M*T*n^2, r*n^2);
+    % for k = 1:r
+    %     PP0 = superkron(eye(n, n), pagemtimes(A_0(:, :, k), squeeze(all_rho(:, :, 1:end-1, :))));
+    %     PPA0 = reshape(permute(PP0, [2, 1, 3]), [n^2,M*T*n^2]).';
+    %     regmat_B_given_A0(:, (k-1)*n^2+1:k*n^2) = PPA0;
+    % end
+    % bB0 = vec(all_rho(:, :, 2:end, :));
+    % vec_B_est0 = regmat_B_given_A0 \ bB0;
+    % B_00 = reshape(vec_B_est0, [n, n, r]);
+    % 
+    % % reshape(permute(PP0, [2, 1, 3]), [n^2,M*T*n^2])'
+    % all_B(:, :, :, i) = B_0;
+    % t2 = toc;
+    % 
+    % fprintf('old time = %f, new time = %f\n', t1, t2)
+    % 
+
+
+
+
+
+
+%%
+
+
 
     % Estimate A next
     regmat_A_given_B = zeros(M*T*n^2, r*n^2);
@@ -122,8 +150,18 @@ for i = 1:niter
     end
     all_E(:, :, i)  = E_0;
     all_rk(i)       = rank(E_0);
-    all_E_svd(:, i) = svd(E_0);
-    
+    % all_E_svd(:, i) = svd(E_0);
+
+    % %% This the equivalence between the mat E and its svd
+    % [U, S, V] = svd(E_0);
+    % AA = reshape(U(:, 1:r)*S(1:r, 1:r), [n, n, r]);
+    % BB = conj(reshape(V(:, 1:r), [n, n, r]))
+    % EE = zeros(n^2, n^2);
+    % for k = 1:r
+    %     EE = EE + vec(BB(:, :, k))*vec(permute(AA(:, :, k), [2, 1])).';
+    % end
+    % sum(EE - E_0, 'all')
+    %%
     
     % %% reduce the rank 
     % [UU, S, VV] = svd(E_0);
@@ -171,11 +209,15 @@ for i = 1:niter
     loss(i) = norm(test_rho - all_rho, 'fro');
 
     if i > 2
-        if abs(loss(i) - loss(i-1)) < loss_threshold
+        if abs(loss(i)-loss(i-1)) < loss_threshold
             break
         end
     end
-            
+
+    if mod(i, 100)== 1
+        fprintf('niter = %d, loss = %f \n', i, loss(i))
+    end
+
 end
 
 
