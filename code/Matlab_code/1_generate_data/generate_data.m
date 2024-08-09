@@ -154,16 +154,16 @@ for k = 1:n^2-1
 end
 
 
-c = zeros(n^2-1, 1);
+h = zeros(n^2-1, 1);
 for j = 1:n^2-1
-    c(j) = trace(H_true*F{j}');
+    h(j) = trace(H_true*F{j}');
 end
 
 
 
 trueInfo.F = F;
 trueInfo.G = G;         % inner product matrix given basis F
-trueInfo.c = c;         % coefficient of H on basis F
+trueInfo.h = h;         % coefficient of H on basis F
 trueInfo.Kossakowski = v*v';
 trueInfo.v_true = v;
 

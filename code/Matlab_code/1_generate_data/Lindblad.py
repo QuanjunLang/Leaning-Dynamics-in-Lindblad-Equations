@@ -42,8 +42,7 @@ def test():
         Num_traj = int(M)
     except NameError:
         Num_traj = 10
-
-
+        
     try:
         times = np.array(tgrid)
     except NameError:

@@ -26,7 +26,7 @@ u = trueInfo.v_true;
 F = trueInfo.F;
 K = trueInfo.Kossakowski;
 n = sqrt(length(L));
-c = trueInfo.c;
+h = trueInfo.h;
 G = trueInfo.G;
 
 % G = cell(n^2-1, n^2-1);
@@ -68,7 +68,7 @@ tic;
 all_u = cell(niter, 1);
 all_v = cell(niter, 1);
 all_K = cell(niter, 1);
-all_c = cell(niter, 1);
+all_h = cell(niter, 1);
 all_H = cell(niter, 1);
 
 u0 = randn(size(u));
@@ -82,7 +82,7 @@ for i = 1:niter
     %     lambda = 0.01;
     % end
     % i
-    [H0, c0] = L_decomposition_Kossakowski_H(L, u0, v0, G, F, n);
+    [H0, h0] = L_decomposition_Kossakowski_H(L, u0, v0, G, F, n);
     u0 = L_decomposition_Kossakowski_u(L_vec, v0, H0, G, n, p, lambda);
     v0 = L_decomposition_Kossakowski_v(L_vec, u0, H0, G, n, p, lambda);
     K0 = u0*v0';
@@ -95,11 +95,11 @@ for i = 1:niter
     all_u{i} = u0;
     all_v{i} = v0;
     all_K{i} = K0;
-    all_c{i} = c0;
+    all_h{i} = h0;
     all_H{i} = H0;
 
     if i > 1
-        c_diff = norm(c0 - all_c{i-1});
+        c_diff = norm(h0 - all_h{i-1});
         K_diff = norm(K0 - all_K{i-1});
         if c_diff<threshold && K_diff < threshold
             niter = i;
@@ -114,7 +114,7 @@ total_time = toc;
 u_err = zeros(niter, 1);
 v_err = zeros(niter, 1);
 K_err = zeros(niter, 1);
-c_err = zeros(niter, 1);
+h_err = zeros(niter, 1);
 H_err = zeros(niter, 1);
 
 uv_df = zeros(niter, 1);
@@ -124,7 +124,7 @@ for i = 1:niter
     u_err(i) = norm(all_u{i} - u, 'fro');
     v_err(i) = norm(all_v{i} - v, 'fro');
     K_err(i) = norm(all_K{i} - K, 'fro');
-    c_err(i) = norm(all_c{i} - c, 'fro');
+    h_err(i) = norm(all_h{i} - h, 'fro');
     H_err(i) = norm(all_H{i} - H, 'fro');
 
     uv_df(i) = norm(all_u{i} - all_v{i}, 'fro');
@@ -137,7 +137,7 @@ if plotON
     % plot(log10(u_err), '-o',  'DisplayName','u', 'LineWidth',lnwd);
     % plot(log10(v_err), 'DisplayName','v', 'LineWidth',lnwd);
     plot(log10(K_err), 'DisplayName','K', 'LineWidth',lnwd);
-    plot(log10(c_err), 'DisplayName','c', 'LineWidth',lnwd);
+    plot(log10(h_err), 'DisplayName','c', 'LineWidth',lnwd);
     % plot(log10(H_err), 'DisplayName','H', 'LineWidth',lnwd);
     % plot(log10(uv_df), 'DisplayName','u-v', 'LineWidth',lnwd);
     % plot(log10(K_sym), 'DisplayName','K-K^t', 'LineWidth',lnwd);
@@ -148,13 +148,21 @@ end
 result.u = all_u{end};
 result.v = all_v{end};
 result.K = all_K{end};
-result.c = all_c{end};
+result.c = all_h{end};
 result.H = all_H{end};
 
-result.c_err = c_err;
+result.h_err = h_err;
 result.K_err = K_err;
 
-
+result.C = cell(p, 1);
+[U, S, ~] = svd(result.K);
+US = U*sqrt(S);
+for i = 1:p
+    result.C{i} = zeros(n, n);
+    for j = 1:n^2-1
+        result.C{i} = result.C{i} + US(j, i)*F{j};
+    end
+end
 
 result.time = total_time;
 end

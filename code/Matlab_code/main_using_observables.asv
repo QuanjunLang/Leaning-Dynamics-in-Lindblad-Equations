@@ -17,8 +17,8 @@ terminate(pe)
 sysInfo.n       = 6;            % dimension of rho
 sysInfo.M       = 50;            % number of independent trajectories
 sysInfo.dt      = 0.0001;       % true data generation time grid
-sysInfo.p       = 4;            % number of jump operators
-sysInfo.N_o     = 10;            % number of obserables
+sysInfo.p       = 1;            % number of jump operators
+sysInfo.N_o     = 8;            % number of obserables
                                 % set to n^2 indecate a full state observation                             
 sysInfo.steps   = 10000;        % total number of time steps
 sysInfo = update_sys(sysInfo);
@@ -30,7 +30,7 @@ sysInfo = update_sys(sysInfo);
 
 
 %% generate observational data
-obsInfo.obs_std = 1e-8;
+obsInfo.obs_std = 0;
 obsInfo.obs_gap = 1000;
 obsInfo.obs_len = 10;
 
@@ -132,42 +132,38 @@ exportgraphics(gcf, 'n_6_K_c_error.pdf', 'ContentType', 'vector', 'BackgroundCol
 
 %%
 
-% % K = result_best.decomposition.K;
-% p = sysInfo.p;
-% n = sysInfo.n;
-% F = trueInfo.F;
-% K = trueInfo.Kossakowski;
-% C = cell(p, 1);
-% [U, S, ~] = svd(K);
-% US = U*sqrt(S);
-% for i = 1:p
-%     C{i} = zeros(n, n);
-%     for j = 1:n^2-1
-%         C{i} = C{i} + US(j, i)*F{j};
-%     end
-% end
-% 
-% C_true = trueInfo.C_true;
-% 
-% C_true{1}
-% C{1}
-% 
-% 
-% 
-% C_true{1}./C{1}
-% C_true{1}./result_best.decomposition.C{1}
+% K = result_best.decomposition.K;
+p = sysInfo.p;
+n = sysInfo.n;
+F = trueInfo.F;
+K = trueInfo.Kossakowski;
+C = cell(p, 1);
+[U, S, ~] = svd(K);
+US = U*sqrt(S);
+for i = 1:p
+    C{i} = zeros(n, n);
+    for j = 1:n^2-2
+        C{i} = C{i} + US(j, i)*F{j};
+    end
+end
 
-% C{1}./result_best.decomposition.C{1}
+C_true = trueInfo.C_true;
+
+C_true{1}
+C{1}
 
 
+
+C_true{1}./C{1}
+C_true{1}./result_best.decomposition.C{1}
+
+C{1}./result_best.decomposition.C{1}
 
 %% Trajactory prediction error
-tgrid       = linspace(0, 50, 100);
-
-trueInfo.pred_traj = generate_data_prediction(tgrid, trueInfo.H_true, trueInfo.C_true);
-result_best.pred_traj = generate_data_prediction(tgrid, result_best.decomposition.H, result_best.decomposition.C);
-result_obs.pred_traj = generate_data_prediction(tgrid, result_obs.decomposition.H, result_obs.decomposition.C);
-result_prony.pred_traj = generate_data_prediction(tgrid, result_prony.decomposition.H, result_prony.decomposition.C);
+trueInfo.pred_traj = generate_data_prediction(sysInfo, trueInfo.H_true, trueInfo.C_true);
+result_best.pred_traj = generate_data_prediction(sysInfo, result_best.decomposition.H, result_best.decomposition.C);
+result_obs.pred_traj = generate_data_prediction(sysInfo, result_obs.decomposition.H, result_obs.decomposition.C);
+result_prony.pred_traj = generate_data_prediction(sysInfo, result_prony.decomposition.H, result_prony.decomposition.C);
 
 
 [n, ~, TN, M] = size(trueInfo.pred_traj);
@@ -177,16 +173,16 @@ ind2 = randi(n);
 indm = randi(M);
 figure;
 subplot(121);hold on;
-plot(tgrid, real(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'Color',color1, 'DisplayName','true')
-plot(tgrid, real(squeeze(result_best.pred_traj(ind1, ind2, :, indm))), 'Color',color2, 'DisplayName','best')
-plot(tgrid, real(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'Color',color3, 'DisplayName','obs')
-plot(tgrid, real(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'Color',color4, 'DisplayName','prony')
+plot(real(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'Color',color1, 'DisplayName','true')
+plot(real(squeeze(result_best.pred_traj(ind1, ind2, :, indm))), 'Color',color2, 'DisplayName','best')
+plot(real(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'Color',color3, 'DisplayName','obs')
+plot(real(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'Color',color4, 'DisplayName','prony')
 
 subplot(122);hold on;
-plot(tgrid, imag(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'Color',color1, 'DisplayName','true')
-plot(tgrid, imag(squeeze(result_best.pred_traj(ind1, ind2, :, indm))), 'Color',color2, 'DisplayName','best')
-plot(tgrid, imag(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'Color',color3, 'DisplayName','obs')
-plot(tgrid, imag(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'Color',color4, 'DisplayName','prony')
+plot(imag(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'Color',color1, 'DisplayName','true')
+plot(imag(squeeze(result_best.pred_traj(ind1, ind2, :, indm))), 'Color',color2, 'DisplayName','best')
+plot(imag(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'Color',color3, 'DisplayName','obs')
+plot(imag(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'Color',color4, 'DisplayName','prony')
 legend()
 
 

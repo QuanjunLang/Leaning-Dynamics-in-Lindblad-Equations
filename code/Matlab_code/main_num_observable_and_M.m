@@ -13,11 +13,11 @@ sysInfo.steps   = 10000;        % total number of time steps
 
 obsInfo.obs_std = 0;
 obsInfo.obs_gap = 1000;
-obsInfo.obs_len = 10;
+obsInfo.obs_len = 6;
 
 
-all_No = sysInfo.n/2-1:sysInfo.n/2:sysInfo.n^2 - 1;
-all_M  = 2:1:10;
+all_No = 20:3:35;
+all_M  = 6:2:12;
 
 
 %% Using observables
@@ -101,8 +101,6 @@ for j = 1:length(all_M)
     err.observable.obs(i+1, j) = all_result_full{j}.obs.err_E(end);
 end
 
-all_No_ext = [all_No, sysInfo.n^2];
-
 for j = 1:length(all_M)
     err.full.best(j) = all_result_full{j}.best.err_E(end);
     err.full.prony(j) = all_result_full{j}.prony.err_E(end);
@@ -110,6 +108,11 @@ for j = 1:length(all_M)
     err.full.t0(j) = all_result_full{j}.t0.err_E(end);
 end
 
+
+%%
+
+all_No_ext = [all_No, sysInfo.n^2];
+addPaths
 
 %% Fix M, plot N_o
 figure;hold on;
@@ -137,12 +140,27 @@ for ind_m = 1:length(all_M)
     title(ttl);
     set(gca, 'YScale', 'log')
 
-    legend('Location','southwest')
+    if ind_m == 1
+        legend('Location','southwest');
+    end
+    grid on;
 end
 
 sgtitle(['Total dimension of density matrix: N = ', num2str(sysInfo.n)])
 
 
+fontsize(16, "points")
+% title('Estimation of Hamiltonian and Kossakowski')
+
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf, 'Units', 'Inches');
+pos = get(gcf, 'Position');
+set(gcf, 'Position', [0, 0, 10, 12])
+set(gcf, 'PaperUnits', 'Inches', 'PaperSize', [pos(3), pos(4)]);
+
+exportgraphics(gcf, 'conv_M_No_N6_0720_L6.pdf', 'ContentType', 'vector', 'BackgroundColor', 'none', 'Resolution', 300);
+
+
 %%
 
-save('num_O_M_conv_M_small.mat', 'err', 'all_M', 'all_No', 'sysInfo')
+save('num_O_M_conv_M_small_0720_short_time.mat', 'err', 'all_M', 'all_No', 'sysInfo')
