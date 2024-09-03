@@ -11,7 +11,6 @@ if FULL_STATE
     rho         = squeeze(all_rho(ind_1, ind_2, :, m));
     rho_obs     = squeeze(all_rho_obs(ind_1, ind_2, :, m));
 
-
 else
     ind_o = randi(sysInfo.N_o);
     m = randi(sysInfo.M);

@@ -23,6 +23,8 @@ plot(tgrid, imag(rho), 'LineWidth', 5);
 plot(tgrid, imag(rho_prony), 'LineWidth', 2);
 plot(obs_tgrid, imag(rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
 xlim([0, obsInfo.T*1.5])
+title('rho fitting')
+legend('true', 'prony', 'obs')
 
 subplot(122);hold on;
 plot(tgrid, real(d_rho), 'LineWidth', 5);
@@ -33,5 +35,7 @@ plot(tgrid, imag(d_rho), 'LineWidth', 5);
 plot(tgrid, imag(d_rho_prony), 'LineWidth', 2);
 plot(obs_tgrid, imag(d_rho_obs), '.-', 'MarkerSize', 25, 'LineWidth', 1);
 xlim([0, obsInfo.T*1.5])
+title('rho derivative fitting')
+legend('true', 'prony', 'obs')
 
 end

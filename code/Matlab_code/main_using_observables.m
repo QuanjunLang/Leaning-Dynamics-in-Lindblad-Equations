@@ -1,7 +1,7 @@
 clc
 close all
 clear all
-rng(0)
+rng(1)
 
 addPaths
 %% TODO
@@ -30,7 +30,7 @@ sysInfo = update_sys(sysInfo);
 
 
 %% generate observational data
-obsInfo.obs_std = 1e-8;
+obsInfo.obs_std = 1e-5;
 obsInfo.obs_gap = 1000;
 obsInfo.obs_len = 10;
 

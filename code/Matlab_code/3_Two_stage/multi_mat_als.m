@@ -9,7 +9,7 @@ addRequired(p, 'r');
 addOptional(p, 'true_para', 0); 
 addOptional(p, 'plotON', 0);
 addOptional(p, 'niter', 2000);
-addOptional(p, 'loss_threshold', 1e-10);
+addOptional(p, 'loss_threshold', 1e-6);
 
 parse(p,all_rho, r, varargin{:});
 

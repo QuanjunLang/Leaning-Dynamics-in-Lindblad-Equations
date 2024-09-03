@@ -55,7 +55,7 @@ def test():
 
     # Hermitian term
     # H = qutip.rand_herm(N, density=0.75, dims=None, pos_def=False)/5
-    H = qutip.rand_herm(N, density=0.75)/5
+    H = qutip.rand_herm(N, density=0.75)/2
     
     # Lindbladian term
     C = []
@@ -66,7 +66,7 @@ def test():
         temp = np.random.normal(0, 1, size=(N, N)) + 1j*np.random.normal(0, 1, size=(N, N))
         #
         temp[0, 0] = temp[0, 0] - np.trace(temp) 
-        C.append(qutip.Qobj(0.05*temp))
+        C.append(qutip.Qobj(0.2*temp))
 
         # C.append(0.2*qutip.destroy(N))
     

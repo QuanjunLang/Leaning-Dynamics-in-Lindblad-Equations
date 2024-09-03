@@ -31,10 +31,10 @@ color4 = [0.4940    0.1840    0.5560];
 % pe = pyenv(Version='/usr/bin/python3', ExecutionMode = 'OutOfProcess');
 pe = pyenv(Version='/opt/anaconda3/bin/python', ExecutionMode = 'OutOfProcess');
 terminate(pe)
-sysInfo.n       = 6;            %
+sysInfo.n       = 7;            %
 sysInfo.M       = 8;            % number of independent trajectories
 sysInfo.dt      = 0.0001;        % true data generation time grid
-sysInfo.p       = 3;            % number of jump operators
+sysInfo.p       = 4;            % number of jump operators
 
 sysInfo.steps   = 10000;
 sysInfo = update_sys(sysInfo);
@@ -48,7 +48,7 @@ L_decomp_true = L_decomposition_hamiltonian_kossakowski(trueInfo.L_true, sysInfo
 
 
 %% generate observational data
-obsInfo.obs_std = 0;
+obsInfo.obs_std = 1e-4;
 obsInfo.obs_gap = 1000;
 obsInfo.obs_len = 10;
 
@@ -118,16 +118,16 @@ result_best.decomposition   = L_decomposition_hamiltonian_kossakowski(result_bes
 figure;
 
 hold on; grid on
-plot(log10(result_prony.decomposition.c_err), 'DisplayName','c error Prony', 'color', color1);
+plot(log10(result_prony.decomposition.h_err), 'DisplayName','H error Prony', 'color', color1);
 plot(log10(result_prony.decomposition.K_err), ':', 'linewidth', 3, 'DisplayName','K error Prony', 'color', color1);
 
-plot(log10(result_obs.decomposition.c_err), 'DisplayName','c error obs', 'color', color2);
+plot(log10(result_obs.decomposition.h_err), 'DisplayName','H error obs', 'color', color2);
 plot(log10(result_obs.decomposition.K_err), ':', 'linewidth', 3, 'DisplayName','K error obs', 'color', color2);
 
-plot(log10(result_t0.decomposition.c_err), 'DisplayName','c error t0', 'color', color3);
+plot(log10(result_t0.decomposition.h_err), 'DisplayName','H error t0', 'color', color3);
 plot(log10(result_t0.decomposition.K_err), ':', 'linewidth', 3, 'DisplayName','K error t0', 'color', color3);
 
-plot(log10(result_best.decomposition.c_err), 'DisplayName','c error best', 'color', color4);
+plot(log10(result_best.decomposition.h_err), 'DisplayName','H error best', 'color', color4);
 plot(log10(result_best.decomposition.K_err), ':', 'linewidth', 3, 'DisplayName','K error best', 'color', color4);
 
 legend()
@@ -142,3 +142,39 @@ set(gcf, 'PaperUnits', 'Inches', 'PaperSize', [pos(3), pos(4)]);
 exportgraphics(gcf, 'n_6_K_c_error.pdf', 'ContentType', 'vector', 'BackgroundColor', 'none', 'Resolution', 300);
 % %% (One stage) ALS Hamiltonian and Kossakowski 
 % result = ALS_hamiltonian_kossakowski(all_rho_prony_pair_data, sysInfo, trueInfo);
+
+%% Trajectory Prediction Error
+
+tgrid       = linspace(0, 50, 100);
+
+trueInfo.pred_traj = generate_data_prediction(tgrid, trueInfo.H_true, trueInfo.C_true);
+result_best.pred_traj = generate_data_prediction(tgrid, result_best.decomposition.H, result_best.decomposition.C);
+result_obs.pred_traj = generate_data_prediction(tgrid, result_obs.decomposition.H, result_obs.decomposition.C);
+result_prony.pred_traj = generate_data_prediction(tgrid, result_prony.decomposition.H, result_prony.decomposition.C);
+result_t0.pred_traj = generate_data_prediction(tgrid, result_t0.decomposition.H, result_t0.decomposition.C);
+
+
+%%
+[n, ~, TN, M] = size(trueInfo.pred_traj);
+
+ind1 = randi(n);
+ind2 = randi(n);
+indm = randi(M);
+figure;
+subplot(121);hold on;
+plot(tgrid, real(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'linewidth', 3, 'Color',color1, 'DisplayName','prony')
+plot(tgrid, real(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'linewidth', 1, 'Color',color2, 'DisplayName','obs')
+plot(tgrid, real(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'linewidth', 3, 'Color',color3, 'DisplayName','true')
+plot(tgrid, real(squeeze(result_best.pred_traj(ind1, ind2, :, indm))),':',  'linewidth', 3, 'Color',color4, 'DisplayName','best')
+title('Real part')
+
+
+subplot(122);hold on;
+plot(tgrid, imag(squeeze(result_prony.pred_traj(ind1, ind2, :, indm))), 'linewidth', 3, 'Color',color1, 'DisplayName','prony')
+plot(tgrid, imag(squeeze(result_obs.pred_traj(ind1, ind2, :, indm))), 'linewidth', 1, 'Color',color2, 'DisplayName','obs')
+plot(tgrid, imag(squeeze(trueInfo.pred_traj(ind1, ind2, :, indm))), 'linewidth', 3, 'Color',color3, 'DisplayName','true')
+plot(tgrid, imag(squeeze(result_best.pred_traj(ind1, ind2, :, indm))), ':', 'linewidth', 3, 'Color',color4, 'DisplayName','best')
+title('Imag part')
+legend()
+
+sgtitle(['Trajectory prediction, total dimension = ', num2str(sysInfo.n), ', ind_1 = ', num2str(ind1), ', ind_2 = ', num2str(ind2)]);

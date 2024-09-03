@@ -65,11 +65,11 @@ G = trueInfo.G;
 %% Iteration
 tic;
 
-all_u = cell(niter, 1);
-all_v = cell(niter, 1);
-all_K = cell(niter, 1);
-all_h = cell(niter, 1);
-all_H = cell(niter, 1);
+all_u = cell(2, 1);
+all_v = cell(2, 1);
+all_K = cell(2, 1);
+all_h = cell(2, 1);
+all_H = cell(2, 1);
 
 u0 = randn(size(u));
 v0 = randn(size(v));
@@ -111,14 +111,14 @@ total_time = toc;
 
 
 %%
-u_err = zeros(niter, 1);
-v_err = zeros(niter, 1);
-K_err = zeros(niter, 1);
-h_err = zeros(niter, 1);
-H_err = zeros(niter, 1);
+u_err = zeros(2, 1);
+v_err = zeros(2, 1);
+K_err = zeros(2, 1);
+h_err = zeros(2, 1);
+H_err = zeros(2, 1);
 
-uv_df = zeros(niter, 1);
-K_sym = zeros(niter, 1);
+uv_df = zeros(2, 1);
+K_sym = zeros(2, 1);
 
 for i = 1:niter
     u_err(i) = norm(all_u{i} - u, 'fro');

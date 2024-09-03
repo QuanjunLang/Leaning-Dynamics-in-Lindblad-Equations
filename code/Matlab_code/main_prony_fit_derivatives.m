@@ -1,11 +1,14 @@
 clc
 close all
 clear all
-rng(2)
-pyenv(Version='/opt/anaconda3/envs/py3.11/bin/python');
+rng(0)
+
 addPaths
 
 %% system settings
+pe = pyenv(Version='/opt/anaconda3/bin/python', ExecutionMode = 'OutOfProcess');
+terminate(pe)
+
 sysInfo.n       = 4;            % 
 sysInfo.M       = 8;            % number of independent trajectories
 sysInfo.dt      = 0.005;        % true data generation time grid
