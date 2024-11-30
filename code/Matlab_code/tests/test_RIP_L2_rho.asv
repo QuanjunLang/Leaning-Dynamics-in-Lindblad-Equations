@@ -1,0 +1,62 @@
+clc
+close all
+clear all
+%%
+
+
+% Parameters
+N = 5;     % Number of Hermite polynomials
+n = 1000;    % Number of samples per matrix
+M = 5;      % Number of independent matrices
+r = 2;      % Target rank for RIP computation
+
+% Generate M independent A matrices
+A_matrices = zeros(N, n, 50);
+for m = 1:M
+    X = randn(1, n); % i.i.d Gaussian samples
+    A = zeros(N, n);
+    for i = 1:N
+        A(i, :) = hermite_poly(i-1, X); % Fill A with Hermite polynomials
+    end
+    A_matrices(:, :, m) = A;
+end
+
+% Compute RIP constant for each matrix
+N_samples_RIP = 1000;
+all_samples = zeros(N_samples_RIP, 1);
+for i = 1:N_samples_RIP
+    B = randn(N, n);
+    [U, S, V] = svd(B);
+
+    X = U(:, 1:r)*S(1:r, 1:r)*V(:, 1:r)';
+    X_norm = sqrt(sum(X.^2, 'all'));
+    AX_norm = sqrt(sum((A.*X).^2, 'all'));
+    all_samples(i) = AX_norm/X_norm;
+end
+
+histogram(all_samples)
+
+c0 = min(all_samples);
+c1 = max(all_samples);
+
+RIP = (c1 - c0)/(c0 + c1)
+
+
+
+function P = hermite_poly(degree, X)
+    % Generate Hermite polynomial of a given degree evaluated at X
+    if degree == 0
+        P = ones(size(X));
+    elseif degree == 1
+        P = 2 * X;
+    else
+        P_prev2 = ones(size(X)); % H_0(x)
+        P_prev1 = 2 * X; % H_1(x)
+        for n = 2:degree
+            P = 2 * X .* P_prev1 - 2 * (n - 1) * P_prev2;
+            P_prev2 = P_prev1;
+            P_prev1 = P;
+        end
+    end
+end
+

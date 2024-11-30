@@ -48,7 +48,7 @@ def test():
     for i in range(Num_jump):
         temp = np.random.normal(0, 1, size=(N, N)) + 1j*np.random.normal(0, 1, size=(N, N))
         temp[0, 0] = temp[0, 0] - np.trace(temp) # make jump operators traceless
-        C.append(qutip.Qobj(0.5*temp))
+        C.append(qutip.Qobj(0.2*temp))
 
     # Observables
     O = []

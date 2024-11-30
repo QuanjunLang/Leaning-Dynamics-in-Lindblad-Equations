@@ -1,4 +1,24 @@
-function result = ALS_hamiltonian_kossakowski(all_rho_pair_data, sysInfo, trueInfo)
+function result = ALS_hamiltonian_kossakowski(all_rho_pair_data, sysInfo, p, trueInfo, varargin)
+
+
+parser = inputParser;
+
+
+addRequired(parser, 'all_rho_pair_data');
+addRequired(parser, 'sysInfo');
+addRequired(parser, 'p');
+addRequired(parser, 'trueInfo');
+addOptional(parser, 'niter', 1000);
+addOptional(parser, 'threshold', 1e-6);
+addOptional(parser, 'ttl', '');
+addOptional(parser, 'plotON', 1);
+parse(parser, all_rho_pair_data, sysInfo, p, trueInfo, varargin{:});
+
+niter           = parser.Results.niter;
+p               = parser.Results.p;
+trueInfo        = parser.Results.trueInfo;
+threshold       = parser.Results.threshold;
+plotON          = parser.Results.plotON;
 
 H = trueInfo.H_true;
 v = trueInfo.v_true;
@@ -6,7 +26,9 @@ u = trueInfo.v_true;
 F = trueInfo.F;
 K = trueInfo.Kossakowski;
 n = sysInfo.n;
-p = sysInfo.p;
+
+%%
+
 
 G = cell(n^2-1, n^2-1);
 for k = 1:n^2-1
@@ -53,12 +75,12 @@ toc
 % norm(c - c_est)
 
 %% Iteration
-niter = 400;
+% % niter = 2;
 
 all_u = cell(niter, 1);
 all_v = cell(niter, 1);
 all_K = cell(niter, 1);
-all_c = cell(niter, 1);
+all_h = cell(niter, 1);
 all_H = cell(niter, 1);
 
 u0 = randn(size(u));
@@ -73,7 +95,7 @@ for i = 1:niter
     %     lambda = 0.01;
     % end
 
-    [H0, c0] = ALS_Kossakowski_H(all_rho_pair_data, u0, v0, G, F);
+    [H0, h0] = ALS_Kossakowski_H(all_rho_pair_data, u0, v0, G, F);
 
     u0 = ALS_Kossakowski_u(all_rho_pair_data, v0, H0, G, p, lambda);
 
@@ -89,8 +111,20 @@ for i = 1:niter
     all_u{i} = u0;
     all_v{i} = v0;
     all_K{i} = K0;
-    all_c{i} = c0;
+    all_h{i} = h0;
     all_H{i} = H0;
+
+    if i > 1
+        c_diff = norm(h0 - all_h{i-1});
+        K_diff = norm(K0 - all_K{i-1});
+        if c_diff<threshold && K_diff < threshold
+            niter = i;
+            break
+        end
+    end
+
+
+
 end
 
 
@@ -99,7 +133,7 @@ end
 u_err = zeros(niter, 1);
 v_err = zeros(niter, 1);
 K_err = zeros(niter, 1);
-c_err = zeros(niter, 1);
+h_err = zeros(niter, 1);
 H_err = zeros(niter, 1);
 
 uv_df = zeros(niter, 1);
@@ -109,28 +143,37 @@ for i = 1:niter
     u_err(i) = norm(all_u{i} - u, 'fro');
     v_err(i) = norm(all_v{i} - v, 'fro');
     K_err(i) = norm(all_K{i} - K, 'fro');
-    c_err(i) = norm(all_c{i} - c, 'fro');
+    h_err(i) = norm(all_h{i} - c, 'fro');
     H_err(i) = norm(all_H{i} - H, 'fro');
     
     uv_df(i) = norm(all_u{i} - all_v{i}, 'fro');
     K_sym(i) = norm(all_K{i} - all_K{i}', 'fro');
+        
 end
 
 
-lnwd = 1.5;
-figure;hold on;
-% plot(log10(u_err), '-o',  'DisplayName','u', 'LineWidth',lnwd);
-% plot(log10(v_err), 'DisplayName','v', 'LineWidth',lnwd);
-plot(log10(K_err), 'DisplayName','K', 'LineWidth',lnwd+3);
-plot(log10(c_err), 'DisplayName','c', 'LineWidth',lnwd+3);
-% plot(log10(H_err), 'DisplayName','H', 'LineWidth',lnwd);
-% plot(log10(uv_df), 'DisplayName','u-v', 'LineWidth',lnwd);
-% plot(log10(K_sym), 'DisplayName','K-K^t', 'LineWidth',lnwd);
-legend()
+% lnwd = 1.5;
+% figure;hold on;grid on;
+% % plot(log10(u_err), '-o',  'DisplayName','u', 'LineWidth',lnwd);
+% % plot(log10(v_err), 'DisplayName','v', 'LineWidth',lnwd);
+% % plot(log10(K_err), 'DisplayName','K error', 'LineWidth',lnwd+3);
+% % plot(log10(h_err), 'DisplayName','h error', 'LineWidth',lnwd+3);
+% % plot(log10(H_err), 'DisplayName','H', 'LineWidth',lnwd);
+% % plot(log10(uv_df), 'DisplayName','u-v', 'LineWidth',lnwd);
+% % plot(log10(K_sym), 'DisplayName','K-K^t', 'LineWidth',lnwd);
+% 
+% semilogy(K_err, 'DisplayName','K error', 'LineWidth',lnwd, );
+% semilogy(h_err, 'DisplayName','h error', 'LineWidth',lnwd, );
+% set(gca, 'YScale', 'log')
+% 
+% legend()
 
 result.u = all_u{end};
 result.v = all_v{end};
 result.K = all_K{end};
-result.c = all_c{end};
+result.c = all_h{end};
 result.H = all_H{end};
+
+result.K_err = K_err;
+result.h_err = h_err
 end
