@@ -10,7 +10,7 @@ addOptional(p, 'debugON', 0);
 addOptional(p, 'plotON', 0);
 addOptional(p, 'maxIter', 500);
 addOptional(p, 'rel_err_tol', 1e-8);
-addOptional(p, 'loss_tol', 1e-8);
+addOptional(p, 'loss_tol', 5e-4);
 addOptional(p, 'X_true', 0);
 addOptional(p, 'operator_name', '');
 addOptional(p, 'NesterovON', 1);
@@ -50,7 +50,7 @@ end
 
 %% ALS
 
-tic
+ALS_one_loop_counter = tic;
 % Initialize U and V randomly
 U0 = randn(N, r) + randn(N, r)*1i;
 V0 = randn(N, r) + randn(N, r)*1i;
@@ -96,7 +96,6 @@ for iter = 1:maxIter
     % end
 
 
-
     % Step 2: Update V with fixed U
     regmat_V = zeros(M, N*r);
     for m = 1:M
@@ -109,7 +108,7 @@ for iter = 1:maxIter
 
     % Nesterov-ALS with restarting
     if NesterovON && iter > 3
-        beta = 0.5;
+        beta = 0.4;
         eta = 1.3;
 
         % Restarting
@@ -149,12 +148,13 @@ for iter = 1:maxIter
     all_V(:, :, iter) = V1;
     all_X(:, :, iter) = X1;
     loss(iter) = norm(squeeze(sum(conj(X1) .*A, [1, 2])) - b);
-    
+    loss(iter) = norm(squeeze(sum(X1 .*conj(A), [1, 2])) - b);
 
     rel_error = norm(X1 - X0, 'fro');
     % rel_error = norm(loss(iter) - loss(iter), 'fro');
     % rel_error = loss(iter);
-    if iter > 5 && (rel_error < rel_err_tol || loss(iter) < loss_tol)
+    % if iter > 5 && (rel_error < rel_err_tol || loss(iter) < loss_tol)
+    if iter > 5 && (rel_error < rel_err_tol && loss(iter) < loss_tol)
         fprintf('Converged in   %d \titerations with relative error %.12f, loss %.12f\n', iter, rel_error, loss(iter));
         flag = 1;
         break;
@@ -170,15 +170,15 @@ end
 M_est = X1;
 
 if flag == 0
-    fprintf('Not Convergece in   %d \t iterations with relative error %.12f, loss %.12f\n', iter, rel_error, loss(iter));
+    fprintf('Not Converged in   %d \t iterations with relative error %.12f, loss %.12f\n', iter, rel_error, loss(iter));
 end
 %%
 outputInfo.all_U = all_U;
 outputInfo.all_V = all_V;
 outputInfo.all_X = all_X;
 outputInfo.loss = loss;
-outputInfo.time = toc;
-
+outputInfo.time = toc(ALS_one_loop_counter);
+outputInfo.convergence_flag = flag;
 if debugON
     all_error = sqrt(squeeze(sum((abs(all_X - X_true)).^2, [1, 2])));
     figure;hold on;

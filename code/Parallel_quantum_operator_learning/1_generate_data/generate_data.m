@@ -1,6 +1,7 @@
 function [all_data, trueInfo, observableInfo] = generate_data(sysInfo, varargin)
 % Use Python package to generate trajectories
 
+total_tic = tic;
 %% Input parser
 p = inputParser;
 addRequired(p, 'sysInfo');
@@ -19,6 +20,7 @@ N_o         = sysInfo.N_o;
 observable_option  = sysInfo.observable_option;
 
 %% Generate data using python packages
+fprintf('Data generation,  with n = %d, M = %d and %d Jump operators\n', n, M, p);
 switch observable_option
     case 'Full_state'
         a = pyrunfile("Lindblad.py", 'a', n = n, p = p, tgrid = tgrid, M = M);
@@ -32,9 +34,11 @@ end
 
 %% Load data from Python code
 result_temp     = cell(a);
+trueInfo.computation_time = double(result_temp{5});
+fprintf('Data generation finished in %.2f seconds\n', trueInfo.computation_time);
 
 
-all_rho_temp    = double(result_temp{1});
+% all_rho_temp    = double(result_temp{1});
 H_true          = double(result_temp{2});   % Hamiltonian
 J_true_temp     = cell(result_temp{3});     % Jump operators
 J_true          = cell(p, 1);
@@ -42,16 +46,22 @@ for i = 1:p
     J_true{i} = double(J_true_temp{i});
 end
 
-
-all_initial_temp     = cell(result_temp{4});  % Initial
-all_initial          = zeros(n, n, M);
-for i = 1:M
-    all_initial(:, :, i) = double(all_initial_temp{i});
+try all_initial_temp     = cell(result_temp{4});  % Initial
+    all_initial          = zeros(n, n, M);
+    for i = 1:M
+        all_initial(:, :, i) = double(all_initial_temp{i});
+    end
+catch ME
+    % Handle the error
+    % disp('An error occurred during the conversion:');
+    all_initial_temp = double(result_temp{4});
+    all_initial = permute(all_initial_temp, [2, 3, 1]);
 end
+
 observableInfo.rho0 = all_initial;
 
 
-computation_time = double(result_temp{5});
+
 
 
 switch observable_option
@@ -208,7 +218,7 @@ trueInfo.RL_sub_blocks = RL_sub_blocks;
 trueInfo.RE_obs_blocks = RE_obs_blocks;
 trueInfo.RL_obs_blocks = RL_obs_blocks;
 
-
+fprintf('Data generation total time: %.2f seconds \n', toc(total_tic));
 end
 
 

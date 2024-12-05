@@ -23,7 +23,7 @@ plotON          = p.Results.plotON;
 debugON         = p.Results.debugON;
 X_true_sub_blocks    = p.Results.X_true_sub_blocks;
 X_true_obs_blocks    = p.Results.X_true_obs_blocks;
-
+X_true          = p.Results.X_true;
 
 [N_o, ~] = size(b);
 [n, ~, ~] = size(A);
@@ -31,9 +31,10 @@ X_true_obs_blocks    = p.Results.X_true_obs_blocks;
 X_obs_blocks = cell(N_o, 1);
 ALS_info = cell(N_o, 1);
 
+parallel_ALS_counter = tic;
 
 %% Parallel reconstruction of the sub blocks
-parfor k = 1:N_o
+for k = 1:N_o
     if k <= n
         rk = r;
     else
@@ -45,6 +46,7 @@ parfor k = 1:N_o
     % [X_obs_blocks{k}, ALS_info{k}] = ALS(A, bk, rk, 'maxIter', 800, 'X_true', X_true_obs_blocks{k}, 'debugON', 1, 'NesterovON', 0);
 end
 
+% pause(3)
 %% Deterministic reconstrurtion of the large matrix
 X_est_blocks = cell(n, n);
 for i = 1:n
@@ -83,6 +85,7 @@ for i = 1:n
     end
 end
 
+outputInfo.time = toc(parallel_ALS_counter);
 %% Error matrix
 error_blocks = zeros(n, n);
 for i = 1:n
@@ -100,13 +103,18 @@ end
 
 rel_error_blocks = error_blocks ./ norm_blocks;
 
-
+error_X = norm(X_est - X_true, 'fro');
+rel_error_X = error_X./norm(X_true, 'fro');
 
 outputInfo.ALS_info = ALS_info;
 outputInfo.X_est_blocks = X_est_blocks;
 outputInfo.error_blocks = error_blocks;
+
 outputInfo.rel_error_blocks = rel_error_blocks;
 outputInfo.norm_blocks = norm_blocks;
+
+outputInfo.error_X = error_X;
+outputInfo.rel_error_X = rel_error_X;
 end
 
 

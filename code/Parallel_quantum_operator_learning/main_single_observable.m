@@ -88,11 +88,11 @@ end
 
 
 
-fprintf('Estimating E: ')
-b_E = squeeze(all_rho(sysInfo.channel_dt_rate+1, :))';
-r_E = trueInfo.rank_RE_true;
-[RE_est, outputInfo_E] = ALS(A_mat, b_E, r_E, 'X_true', RE, 'debugON', 1, 'operator_name', 'E');
-fprintf('Time: %.3f\n', outputInfo_E.time)
+% fprintf('Estimating E: ')
+% b_E = squeeze(all_rho(sysInfo.channel_dt_rate+1, :))';
+% r_E = trueInfo.rank_RE_true;
+% [RE_est, outputInfo_E] = ALS(A_mat, b_E, r_E, 'X_true', RE, 'debugON', 1, 'operator_name', 'E');
+% fprintf('Time: %.3f\n', outputInfo_E.time)
 
 
 fprintf('Estimating L: ')
