@@ -14,6 +14,8 @@ switch sysInfo.observable_option
         sysInfo.N_o = 1;
     case 'First_row_col_diag'
         sysInfo.N_o = 3*sysInfo.n - 2;
+    case {'First_row_col', 'Channel_first_row_col'}
+        sysInfo.N_o = 2*sysInfo.n - 1;
 end
 
 

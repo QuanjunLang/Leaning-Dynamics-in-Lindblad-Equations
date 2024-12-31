@@ -9,7 +9,6 @@ addOptional(parser, 'niter', 50);
 addOptional(parser, 'threshold', 1e-8);
 addOptional(parser, 'ttl', '');
 addOptional(parser, 'plotON', 1);
-addOptional(parser, 'debugON', 1);
 parse(parser, L, p, trueInfo, varargin{:});
 
 niter           = parser.Results.niter;
@@ -19,21 +18,16 @@ trueInfo        = parser.Results.trueInfo;
 threshold       = parser.Results.threshold;
 ttl             = parser.Results.ttl;
 plotON          = parser.Results.plotON;
-debugON         = parser.Results.debugON;
 %%
-
-if debugON
-    H = trueInfo.H_true;
-    L_vec = vec(L);
-    v = trueInfo.v_true;
-    u = trueInfo.v_true;
-    F = trueInfo.F;
-    K = trueInfo.Kossakowski;
-    n = sqrt(length(L));
-    h = trueInfo.h;
-    G = trueInfo.G;
-end
-
+H = trueInfo.H_true;
+L_vec = vec(L);
+v = trueInfo.v_true;
+u = trueInfo.v_true;
+F = trueInfo.F;
+K = trueInfo.Kossakowski;
+n = sqrt(length(L));
+h = trueInfo.h;
+G = trueInfo.G;
 
 % G = cell(n^2-1, n^2-1);
 % for k = 1:n^2-1

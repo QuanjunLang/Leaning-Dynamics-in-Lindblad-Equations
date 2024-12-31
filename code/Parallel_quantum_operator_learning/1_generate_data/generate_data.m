@@ -30,6 +30,8 @@ switch observable_option
         a = pyrunfile("Lindblad_single_observable.py", 'a', n = n, p = p, tgrid = tgrid, M = M);
     case 'First_row_col_diag'
         a = pyrunfile("Lindblad_first_row_col_diag.py", 'a', n = n, p = p, tgrid = tgrid, M = M);
+    case 'First_row_col'
+        a = pyrunfile("Lindblad_first_row_col.py", 'a', n = n, p = p, tgrid = tgrid, M = M);
 end
 
 %% Load data from Python code
@@ -98,7 +100,7 @@ switch observable_option
             O_true(:, :, m) = double(O_true_temp{m});
         end
         observableInfo.O    = O_true;
-    case 'First_row_col_diag'
+    case {'First_row_col_diag', 'First_row_col'}
         % Expectation
         all_expect_temp   = double(result_temp{1});
         all_data        = permute(all_expect_temp, [2, 3, 1]);

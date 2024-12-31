@@ -11,8 +11,8 @@ addPaths
 pe = pyenv(Version='/opt/anaconda3/bin/python', ExecutionMode = 'OutOfProcess');
 terminate(pe)
 
-sysInfo.n               = 32;           %
-sysInfo.M               = 400;          % number of independent trajectories
+sysInfo.n               = 16;           %
+sysInfo.M               = 200;          % number of independent trajectories
 sysInfo.dt              = 0.000001;     % true data generation time grid
 sysInfo.p               = 1;            % number of jumpoperators
 sysInfo.steps           = 3;
@@ -20,7 +20,9 @@ sysInfo.channel_dt_rate = 3;
 
 
 
-sysInfo.observable_option  = 'First_row_col_diag';
+
+sysInfo.observable_option  = 'First_row_col';
+% sysInfo.observable_option  = 'First_row_col_diag';
 % sysInfo.observable_option  = 'Full_state';
 % sysInfo.observable_option  = 'Multiple_random_observables';  sysInfo.N_o = 7;
 % sysInfo.observable_option  = 'Single_random_observable';
@@ -85,17 +87,17 @@ all_rho0    = observableInfo.rho0;
 
 
 %% example: one block of L (high rank Hermittian)
-% ind_o = 5;
-% b_L = squeeze(all_rho(ind_o, 2, :) - all_rho(ind_o, 1, :))/sysInfo.dt;
-% % b_L_est = squeeze(sum(conj(RL_obs_blocks{ind_o}).*all_rho0, [1,2]));
-% l = RL_obs_blocks{ind_o};
-%
-% [L_blocks_ind_o_est, outputInfo_L] = ALS(all_rho0, b_L, rank(RL_obs_blocks{ind_o}), 'X_true', RL_obs_blocks{ind_o}, 'debugON', 1, 'NesterovON', 1);
-% [L_blocks_ind_o_est, outputInfo_L] = ALS(all_rho0, b_L, rank(RL_obs_blocks{ind_o}), 'X_true', RL_obs_blocks{ind_o}, 'debugON', 1, 'NesterovON', 0);
+ind_o = 1;
+b_L = squeeze(all_rho(ind_o, 2, :) - all_rho(ind_o, 1, :))/sysInfo.dt;
+% b_L_est = squeeze(sum(conj(RL_obs_blocks{ind_o}).*all_rho0, [1,2]));
+l = RL_obs_blocks{ind_o};
+
+[L_blocks_ind_o_est, outputInfo_L] = ALS(all_rho0, b_L, rank(RL_obs_blocks{ind_o}), 'X_true', RL_obs_blocks{ind_o}, 'debugON', 1, 'NesterovON', 1);
+[L_blocks_ind_o_est, outputInfo_L] = ALS(all_rho0, b_L, rank(RL_obs_blocks{ind_o}), 'X_true', RL_obs_blocks{ind_o}, 'debugON', 1, 'NesterovON', 0);
 
 
 %% example: one block of L (low rank non-Hermittian)
-ind_first_row = 6;
+ind_first_row = 1;
 l = RL_sub_blocks{1, ind_first_row+1};
 b = squeeze(all_rho(:, 2, :) - all_rho(:, 1, :))/sysInfo.dt;
 b_fisrt_row = (b(n+ind_first_row, :) -1i*b(2*n-1+ind_first_row, :)).'/2;
@@ -114,8 +116,8 @@ A = all_rho0;
 bL = squeeze(all_rho(:, 2, :) - all_rho(:, 1, :))/sysInfo.dt;
 rL = trueInfo.rank_RL_true;
 
-[RL_est, RL_Info] = parallel_ALS_first_row(A, bL, rL, 'X_true_sub_blocks', RL_sub_blocks, 'X_true_obs_blocks', RL_obs_blocks, 'X_true', RL, 'num_retry', 0);
-
+% [RL_est, RL_Info] = parallel_ALS_first_row(A, bL, rL, 'X_true_sub_blocks', RL_sub_blocks, 'X_true_obs_blocks', RL_obs_blocks, 'X_true', RL, 'num_retry', 0);
+[RL_est, RL_Info] = parallel_ALS_first_row_new(A, bL, rL, 'X_true_sub_blocks', RL_sub_blocks, 'X_true_obs_blocks', RL_obs_blocks, 'X_true', RL, 'num_retry', 0);
 
 if RL_Info.flag
     figure;
